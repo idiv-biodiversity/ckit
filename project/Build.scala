@@ -8,8 +8,8 @@ import Resolvers._
 object BuildSettings {
   lazy val buildOrganization = "ckit"
   lazy val buildVersion      = "0.1.0-SNAPSHOT"
-  lazy val buildScalaVersion = "2.9.1"
-  lazy val akkaVersion       = "2.0.1"
+  lazy val buildScalaVersion = "2.9.2"
+  lazy val akkaVersion       = "2.0.2"
 
   lazy val baseSettings = Defaults.defaultSettings ++ Seq (
     organization   := buildOrganization,
@@ -81,7 +81,7 @@ object Dependencies {
   // -----------------------------------------------------------------------
 
   lazy val swing  = "org.scala-lang"       %  "scala-swing" % buildScalaVersion // Modified BSD (Scala)
-  lazy val conf   = "com.typesafe"         %  "config"      % "0.4.0"           // ApacheV2
+  lazy val conf   = "com.typesafe"         %  "config"      % "0.4.1"           // ApacheV2
   lazy val actor  = "com.typesafe.akka"    %  "akka-actor"  % akkaVersion       // ApacheV2
   lazy val remote = "com.typesafe.akka"    %  "akka-remote" % akkaVersion       // ApacheV2
   lazy val time   = "org.scala-tools.time" %% "time"        % "0.5"             // ApacheV2
@@ -92,7 +92,7 @@ object Dependencies {
   // test
   // -----------------------------------------------------------------------
 
-  lazy val specs2 = "org.specs2" %% "specs2" % "1.9" % "test"
+  lazy val specs2 = "org.specs2" %% "specs2" % "1.11" % "test"
 
 }
 
