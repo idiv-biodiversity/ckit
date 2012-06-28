@@ -3,7 +3,6 @@ import Keys._
 
 import BuildSettings._
 import Dependencies._
-import Resolvers._
 
 object BuildSettings {
   lazy val buildOrganization = "ckit"
@@ -14,8 +13,7 @@ object BuildSettings {
   lazy val baseSettings = Defaults.defaultSettings ++ Seq (
     organization   := buildOrganization,
     version        := buildVersion,
-    scalaVersion   := buildScalaVersion,
-    resolvers     ++= Seq ( sonatype, typesafe )
+    scalaVersion   := buildScalaVersion
   )
 }
 
@@ -94,9 +92,4 @@ object Dependencies {
 
   lazy val specs2 = "org.specs2" %% "specs2" % "1.11" % "test"
 
-}
-
-object Resolvers {
-  lazy val typesafe = "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases"
-  lazy val sonatype = "Sonatype Releases"   at "http://oss.sonatype.org/content/repositories/releases"
 }
