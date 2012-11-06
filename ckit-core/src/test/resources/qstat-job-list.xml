@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
+  <queue_info>
+    <job_list state="running">
+      <JB_job_number>364146</JB_job_number>
+      <JAT_prio>0.60000</JAT_prio>
+      <JB_name>Sleeper</JB_name>
+      <JB_owner>krausec</JB_owner>
+      <state>r</state>
+      <JAT_start_time>2012-11-06T16:51:55</JAT_start_time>
+      <queue_name>batch@node064</queue_name>
+      <slots>1</slots>
+    </job_list>
+  </queue_info>
+  <job_info>
+    <job_list state="pending">
+      <JB_job_number>364145</JB_job_number>
+      <JAT_prio>0.55101</JAT_prio>
+      <JB_name>mpi-info-openmpi-1.6.3-intel-12.0.4</JB_name>
+      <JB_owner>krausec</JB_owner>
+      <state>qw</state>
+      <JB_submission_time>2012-11-06T16:51:02</JB_submission_time>
+      <queue_name></queue_name>
+      <slots>13</slots>
+    </job_list>
+  </job_info>
+</job_info>
