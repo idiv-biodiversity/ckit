@@ -32,28 +32,11 @@ object GridEngine {
 
   private[GridEngine] val QueueInstance = """(.+)@(.+)""".r
 
-  def parseJobListFromXML(xml: ⇒ Elem): Try[Seq[Job]] = Try {
-    xml \\ "job_list" map { xml ⇒
-      val (q,n) = (xml \ "queue_name").text.trim match {
-        case QueueInstance(q,n) ⇒ (q,n)
-        case _                  ⇒ ("","")
-      }
-
-      Job (
-        id = (xml \ "JB_job_number").text.toInt,
-        priority = (xml \ "JAT_prio").text.toDouble,
-        name = (xml \ "JB_name").text,
-        owner = (xml \ "JB_owner").text,
-        state = (xml \ "state").text,
-        start = (xml \ "JAT_start_time").text,
-        queue = q,
-        node = n,
-        slots = (xml \ "slots").text.toInt
-      )
-    }
+  def jobList(xml: ⇒ Elem): Try[Seq[Job]] = Try {
+    xml \\ "job_list" map job
   }
 
-  def parseQueueSummaryFromXML(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
+  def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
     xml \ "cluster_queue_summary" map { xml ⇒
       QueueSummary (
         name                 = (xml \ "name").text,
@@ -66,6 +49,37 @@ object GridEngine {
         unavailable          = (xml \ "manual_intervention").text.toInt
       )
     }
+  }
+
+  def runtimeSchedule(xml: ⇒ Elem): Try[Seq[(Job,Int)]] = Try {
+    xml \ "queue_info" \ "job_list" map { xml ⇒
+      (job(xml), jobResourceList(xml, "h_rt"))
+    } collect {
+      case (job,Some(runtime)) ⇒ (job,runtime.toInt)
+    }
+  }
+
+  def jobResourceList(xml: Node, resource: String): Option[String] = xml \ "hard_request" collectFirst {
+    case xml if (xml \ "@name").text == resource ⇒ xml.text
+  }
+
+  def job(xml: Node): Job = {
+    val (q,n) = (xml \ "queue_name").text.trim match {
+      case QueueInstance(q,n) ⇒ (q,n)
+      case _                  ⇒ ("","")
+    }
+
+    Job (
+      id       = (xml \ "JB_job_number").text.toInt,
+      priority = (xml \ "JAT_prio").text.toDouble,
+      name     = (xml \ "JB_name").text,
+      owner    = (xml \ "JB_owner").text,
+      state    = (xml \ "state").text,
+      start    = (xml \ "JAT_start_time").text,
+      queue    = q,
+      node     = n,
+      slots    = (xml \ "slots").text.toInt
+    )
   }
 
 }

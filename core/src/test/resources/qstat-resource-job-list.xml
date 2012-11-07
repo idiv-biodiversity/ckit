@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
+  <queue_info>
+    <job_list state="running">
+      <JB_job_number>365178</JB_job_number>
+      <JAT_prio>0.60101</JAT_prio>
+      <JB_name>mpi-info-openmpi-1.6.3-gcc-4.7.1</JB_name>
+      <JB_owner>krausec</JB_owner>
+      <state>r</state>
+      <JAT_start_time>2012-11-07T15:06:54</JAT_start_time>
+      <queue_name>parallel@node025</queue_name>
+      <slots>24</slots>
+      <full_job_name>mpi-info-openmpi-1.6.3-gcc-4.7.1</full_job_name>
+      <requested_pe name="openmpi-orte">13-24</requested_pe>
+      <granted_pe name="openmpi-orte">24</granted_pe>
+      <hard_request name="h_rt" resource_contribution="0.000000">3600</hard_request>
+      <hard_request name="highmem" resource_contribution="0.000000">0</hard_request>
+    </job_list>
+  </queue_info>
+  <job_info>
+  </job_info>
+</job_info>
