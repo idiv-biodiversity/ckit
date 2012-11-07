@@ -25,32 +25,13 @@
 
 package ckit
 
-import scala.util.Try
-import scala.xml._
-
-object GridEngine {
-
-  val QueueInstance = """(.+)@(.+)""".r
-
-  def parseJobListFromXML(xml: ⇒ Elem): Try[Seq[Job]] = Try {
-    xml \\ "job_list" map { xml ⇒
-      val (q,n) = (xml \ "queue_name").text.trim match {
-        case QueueInstance(q,n) ⇒ (q,n)
-        case _                  ⇒ ("","")
-      }
-
-      Job (
-        id = (xml \ "JB_job_number").text.toInt,
-        priority = (xml \ "JAT_prio").text.toDouble,
-        name = (xml \ "JB_name").text,
-        owner = (xml \ "JB_owner").text,
-        state = (xml \ "state").text,
-        start = (xml \ "JAT_start_time").text,
-        queue = q,
-        node = n,
-        slots = (xml \ "slots").text.toInt
-      )
-    }
-  }
-
-}
+case class QueueSummary (
+    name: String,
+    load: Double,
+    used: Int,
+    reserved: Int,
+    available: Int,
+    total: Int,
+    temporaryUnavailable: Int,
+    unavailable: Int
+  )

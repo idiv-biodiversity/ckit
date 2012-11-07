@@ -36,9 +36,10 @@ object ClusterKitBuild extends Build {
   // -----------------------------------------------------------------------------------------------
 
   lazy val core = Project (
-    id        = "ckit-core",
-    base      = file ("ckit-core"),
+    id        = "core",
+    base      = file ("core"),
     settings  = baseSettings ++ Seq (
+      name := "ckit-core",
       libraryDependencies ++= Seq ( conf, actor, remote, arm, specs2 )
     )
   )
@@ -48,10 +49,11 @@ object ClusterKitBuild extends Build {
   // -----------------------------------------------------------------------------------------------
 
   lazy val daemon = Project (
-    id            = "ckit-daemon",
-    base          = file ("ckit-daemon"),
+    id            = "daemon",
+    base          = file ("daemon"),
     dependencies  = Seq ( core ),
     settings      = baseSettings ++ Seq (
+      name := "ckit-daemon",
       libraryDependencies ++= Seq ( arm, specs2 )
     )
   )
@@ -61,17 +63,20 @@ object ClusterKitBuild extends Build {
   // -----------------------------------------------------------------------------------------------
 
   lazy val clientCore = Project (
-    id            = "ckit-client-core",
-    base          = file ("ckit-client-core"),
+    id            = "client-core",
+    base          = file ("client-core"),
     dependencies  = Seq ( core ),
-    settings      = baseSettings
+    settings      = baseSettings ++ Seq (
+      name := "ckit-client-core"
+    )
   )
 
   lazy val clientSwing = Project (
-    id            = "ckit-client-swing",
-    base          = file ("ckit-client-swing"),
+    id            = "client-swing",
+    base          = file ("client-swing"),
     dependencies  = Seq ( clientCore ),
     settings      = baseSettings ++ Seq (
+      name := "ckit-client-swing",
       libraryDependencies ++= Seq ( swing, chart )
     )
   )

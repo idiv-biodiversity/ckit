@@ -40,24 +40,41 @@ class GridEngineParserSpec extends Specification { def is =
   "Grid Engine Parser Specification"                                                               ^
                                                                                                   p^
   "Job List Parsing"                                                                               ^
-    "invalid target yields empty collection"                          ! invalid                    ^
-    "empty queue_info yields empty collection"                        ! empty                      ^
-    "valid input yields non empty collection"                         ! nonEmpty                   ^
+    "invalid target yields empty collection"                          ! invalidList                ^
+    "empty target yields empty collection"                            ! emptyList                  ^
+    "valid input yields non empty collection"                         ! nonEmptyList               ^
+                                                                                                  p^
+  "Queue Summary Parsing"                                                                          ^
+    "invalid target yields empty collection"                          ! invalidSummary             ^
+    "valid input yields non empty collection"                         ! nonEmptySummary          ^t^
+      "contains correct names of queues"                              ! nonEmptySummaryNames       ^
                                                                                                  end
   // -----------------------------------------------------------------------------------------------
   // tests
   // -----------------------------------------------------------------------------------------------
 
-  def invalid = GridEngine.parseJobListFromXML (
+  def invalidList = GridEngine.parseJobListFromXML (
     XML.load(getClass.getResource(""))
   ).isFailure must beTrue
 
-  def empty = GridEngine.parseJobListFromXML (
-    XML.load(getClass.getResource("/empty-qstat-job-list.xml"))
+  def emptyList = GridEngine.parseJobListFromXML (
+    XML.load(getClass.getResource("/qstat-job-list-empty.xml"))
   ).get must have size 0
 
-  def nonEmpty = GridEngine.parseJobListFromXML (
+  def nonEmptyList = GridEngine.parseJobListFromXML (
     XML.load(getClass.getResource("/qstat-job-list.xml"))
   ).get must have size 2
+
+  def invalidSummary = GridEngine.parseQueueSummaryFromXML (
+    XML.load(getClass.getResource(""))
+  ).isFailure must beTrue
+
+  def nonEmptySummary = GridEngine.parseQueueSummaryFromXML (
+    XML.load(getClass.getResource("/qstat-queue-summary.xml"))
+  ).get must have size 4
+
+  def nonEmptySummaryNames = GridEngine.parseQueueSummaryFromXML (
+    XML.load(getClass.getResource("/qstat-queue-summary.xml"))
+  ).get map { _.name } must contain ("batch", "highmem", "mixed", "parallel").only.inOrder
 
 }
