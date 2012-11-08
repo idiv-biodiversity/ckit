@@ -24,6 +24,7 @@
 
 
 package ckit
+package daemon
 
 import language.postfixOps
 

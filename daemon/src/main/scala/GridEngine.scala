@@ -24,6 +24,7 @@
 
 
 package ckit
+package daemon
 
 import scala.util.Try
 import scala.xml._
