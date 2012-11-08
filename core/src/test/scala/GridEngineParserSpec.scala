@@ -27,8 +27,6 @@ package ckit
 
 import language.postfixOps
 
-import scala.xml.XML
-
 import org.specs2._
 
 class GridEngineParserSpec extends Specification { def is =
@@ -40,58 +38,79 @@ class GridEngineParserSpec extends Specification { def is =
   "Grid Engine Parser Specification"                                                               ^
                                                                                                   p^
   "Job List Parsing"                                                                               ^
-    "invalid target yields empty collection"                          ! invalidList                ^
+    "invalid target yields failure"                                   ! invalidList                ^
     "empty target yields empty collection"                            ! emptyList                  ^
     "valid input yields non empty collection"                         ! nonEmptyList               ^
                                                                                                   p^
+  "Job Detail Parsing"                                                                             ^
+    "invalid target yields failure"                                   ! invalidDetail              ^
+    "empty target yields failure"                                     ! emptyDetail                ^
+    "valid input yields success (sequential job)"                     ! seqDetail                ^t^
+      "which has one task"                                            ! seqDetailTasks             ^
+      "which has two requests"                                        ! seqDetailRequests       ^bt^
+    "valid input yields success (parallel job)"                       ! parDetail                ^t^
+      "which has one task"                                            ! parDetailTasks             ^
+      "which has two requests"                                        ! parDetailRequests       ^bt^
+    "valid input yields success (array job)"                          ! arrDetail                ^t^
+      "which has ten tasks"                                           ! arrDetailTasks             ^
+      "which has two requests"                                        ! arrDetailRequests       ^bt^
+    "valid input yields success (waiting job)"                        ! waitDetail               ^t^
+      "which has no task"                                             ! waitDetailTasks            ^
+      "which has two requests"                                        ! waitDetailRequests         ^
+      "which has non empty messages"                                  ! waitDetailMessages      ^bt^
+                                                                                                  p^
   "Queue Summary Parsing"                                                                          ^
-    "invalid target yields empty collection"                          ! invalidSummary             ^
+    "invalid target yields failure"                                   ! invalidSummary             ^
     "valid input yields non empty collection"                         ! nonEmptySummary          ^t^
       "contains correct names of queues"                              ! nonEmptySummaryNames    ^bt^
                                                                                                   p^
   "Runtime Schedule Parsing"                                                                       ^
-    "invalid target yields empty collection"                          ! invalidSchedule            ^
+    "invalid target yields failure"                                   ! invalidSchedule            ^
     "empty target yields empty collection"                            ! emptySchedule              ^
-    "valid input yields non empty collection"                         ! nonEmptySchedule         ^t^
+    "valid input yields non empty collection"                         ! nonEmptySchedule           ^
                                                                                                  end
   // -----------------------------------------------------------------------------------------------
   // tests
   // -----------------------------------------------------------------------------------------------
 
-  def invalidList = GridEngine.jobList (
-    XML.load(getClass.getResource(""))
-  ).isFailure must beTrue
+  def invalidList = list("").isFailure must beTrue
+  def emptyList = list("/qstat-job-list-empty.xml").get must have size 0
+  def nonEmptyList = list("/qstat-job-list.xml").get must have size 2
 
-  def emptyList = GridEngine.jobList (
-    XML.load(getClass.getResource("/qstat-job-list-empty.xml"))
-  ).get must have size 0
+  def invalidDetail = detail("").isFailure must beTrue
+  def emptyDetail = detail("/qstat-job-detail-empty.xml").isFailure must beTrue
+  def seqDetail = detail("/qstat-job-detail-sequential.xml").isSuccess must beTrue
+  def seqDetailTasks = detail("/qstat-job-detail-sequential.xml").get.tasks must have size 1
+  def seqDetailRequests = detail("/qstat-job-detail-sequential.xml").get.requests must have size 2
+  def parDetail = detail("/qstat-job-detail-parallel.xml").isSuccess must beTrue
+  def parDetailTasks = detail("/qstat-job-detail-parallel.xml").get.tasks must have size 1
+  def parDetailRequests = detail("/qstat-job-detail-parallel.xml").get.requests must have size 2
+  def arrDetail = detail("/qstat-job-detail-array-job.xml").isSuccess must beTrue
+  def arrDetailTasks = detail("/qstat-job-detail-array-job.xml").get.tasks must have size 10
+  def arrDetailRequests = detail("/qstat-job-detail-array-job.xml").get.requests must have size 2
+  def waitDetail = detail("/qstat-job-detail-waiting.xml").isSuccess must beTrue
+  def waitDetailTasks = detail("/qstat-job-detail-waiting.xml").get.tasks must have size 0
+  def waitDetailRequests = detail("/qstat-job-detail-waiting.xml").get.requests must have size 2
+  def waitDetailMessages = detail("/qstat-job-detail-waiting.xml").get.messages must not be empty
 
-  def nonEmptyList = GridEngine.jobList (
-    XML.load(getClass.getResource("/qstat-job-list.xml"))
-  ).get must have size 2
+  def invalidSummary = summary("").isFailure must beTrue
+  def nonEmptySummary = summary("/qstat-queue-summary.xml").get must have size 4
+  def nonEmptySummaryNames = summary("/qstat-queue-summary.xml").get map {
+    _.name
+  } must contain ("batch", "highmem", "mixed", "parallel").only.inOrder
 
-  def invalidSummary = GridEngine.queueSummary (
-    XML.load(getClass.getResource(""))
-  ).isFailure must beTrue
+  def invalidSchedule = schedule("").isFailure must beTrue
+  def emptySchedule = schedule("/qstat-job-list-empty.xml").get must have size 0
+  def nonEmptySchedule = schedule("/qstat-resource-job-list.xml").get must have size 1
 
-  def nonEmptySummary = GridEngine.queueSummary (
-    XML.load(getClass.getResource("/qstat-queue-summary.xml"))
-  ).get must have size 4
+  // -----------------------------------------------------------------------------------------------
+  // util
+  // -----------------------------------------------------------------------------------------------
 
-  def nonEmptySummaryNames = GridEngine.queueSummary (
-    XML.load(getClass.getResource("/qstat-queue-summary.xml"))
-  ).get map { _.name } must contain ("batch", "highmem", "mixed", "parallel").only.inOrder
-
-  def invalidSchedule = GridEngine.runtimeSchedule (
-    XML.load(getClass.getResource(""))
-  ).isFailure must beTrue
-
-  def emptySchedule = GridEngine.runtimeSchedule (
-    XML.load(getClass.getResource("/qstat-job-list-empty.xml"))
-  ).get must have size 0
-
-  def nonEmptySchedule = GridEngine.runtimeSchedule (
-    XML.load(getClass.getResource("/qstat-resource-job-list.xml"))
-  ).get must have size 1
+  def XML(res: String) = scala.xml.XML.load(getClass.getResource(res))
+  def list(res: String) = GridEngine.jobList(XML(res))
+  def detail(res: String) = GridEngine.jobDetail(XML(res))
+  def summary(res: String) = GridEngine.queueSummary(XML(res))
+  def schedule(res: String) = GridEngine.runtimeSchedule(XML(res))
 
 }

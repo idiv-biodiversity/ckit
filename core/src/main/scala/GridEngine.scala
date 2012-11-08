@@ -36,6 +36,41 @@ object GridEngine {
     xml \\ "job_list" map job
   }
 
+  def jobDetail(xml: ⇒ Elem): Try[JobDetail] = Try {
+    def requests(xml: ⇒ NodeSeq): Seq[(String,String)] = xml \ "qstat_l_requests" map { xml ⇒
+      (xml \ "CE_name").text → (xml \ "CE_stringval").text
+    }
+
+    def taskUsage(xml: ⇒ NodeSeq): Seq[(String,String)] = for {
+      elem  ← xml \ "scaled"
+      name  = (elem \ "UA_name").text
+      value = (elem \ "UA_value").text
+    } yield name → value
+
+    def tasks(xml: ⇒ NodeSeq): Seq[(String,Map[String,String])] = for {
+      task  ← xml \ "ulong_sublist"
+      id    = (task \ "JAT_task_number").text if id.nonEmpty
+      usage = taskUsage(task \ "JAT_scaled_usage_list").toMap if usage.nonEmpty
+    } yield id → usage
+
+    def messages(xml: ⇒ NodeSeq): Seq[String] = for {
+      message ← xml \\ "MES_message"
+    } yield message.text
+
+    JobDetail (
+      name           = (xml \\ "JB_job_name").text,
+      id             = (xml \\ "JB_job_number").text,
+      owner          = (xml \\ "JB_owner").text,
+      group          = (xml \\ "JB_group").text,
+      project        = (xml \\ "JB_project").text,
+      account        = (xml \\ "JB_account").text,
+      requests       = requests(xml \\ "JB_hard_resource_list").toMap,
+      tasks          = tasks(xml \\ "JB_ja_tasks").toMap,
+      messages       = messages(xml \\ "SME_message_list"),
+      globalMessages = messages(xml \\ "SME_global_message_list")
+    )
+  }
+
   def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
     xml \ "cluster_queue_summary" map { xml ⇒
       QueueSummary (

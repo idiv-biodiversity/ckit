@@ -36,3 +36,16 @@ case class Job (
     node: String,
     slots: Int
   )
+
+case class JobDetail (
+    name: String,
+    id: String,
+    owner: String,
+    group: String,
+    project: String,
+    account: String,
+    requests: Map[String,String],
+    tasks: Map[String,Map[String,String]],
+    messages: Seq[String],
+    globalMessages: Seq[String]
+  )

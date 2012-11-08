@@ -1,0 +1,640 @@
+<?xml version='1.0'?>
+<detailed_job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
+  <djob_info>
+    <element>
+      <JB_job_number>362749</JB_job_number>
+      <JB_ar>0</JB_ar>
+      <JB_exec_file>job_scripts/362749</JB_exec_file>
+      <JB_submission_time>1352105897</JB_submission_time>
+      <JB_owner>goehler</JB_owner>
+      <JB_uid>41794</JB_uid>
+      <JB_group>chs</JB_group>
+      <JB_gid>4463</JB_gid>
+      <JB_account>sge</JB_account>
+      <JB_merge_stderr>true</JB_merge_stderr>
+      <JB_mail_list>
+        <element>
+          <MR_user>goehler</MR_user>
+          <MR_host>frontend1</MR_host>
+        </element>
+      </JB_mail_list>
+      <JB_project>chs</JB_project>
+      <JB_notify>false</JB_notify>
+      <JB_job_name>SZ_9338</JB_job_name>
+      <JB_stdout_path_list>
+        <path_list>
+          <PN_path>/data/bae/goehler/Optimization/Model_Zacharias/boot_SZdata/boot_MDDS_9400/SZ_boot_9338.out</PN_path>
+          <PN_host></PN_host>
+          <PN_file_host></PN_file_host>
+          <PN_file_staging>false</PN_file_staging>
+        </path_list>
+      </JB_stdout_path_list>
+      <JB_jobshare>0</JB_jobshare>
+      <JB_hard_resource_list>
+        <qstat_l_requests>
+          <CE_name>h_rt</CE_name>
+          <CE_valtype>3</CE_valtype>
+          <CE_stringval>259200</CE_stringval>
+          <CE_doubleval>259200.000000</CE_doubleval>
+          <CE_relop>0</CE_relop>
+          <CE_consumable>1</CE_consumable>
+          <CE_dominant>0</CE_dominant>
+          <CE_pj_doubleval>0.000000</CE_pj_doubleval>
+          <CE_pj_dominant>0</CE_pj_dominant>
+          <CE_requestable>0</CE_requestable>
+          <CE_tagged>0</CE_tagged>
+        </qstat_l_requests>
+        <qstat_l_requests>
+          <CE_name>highmem</CE_name>
+          <CE_valtype>5</CE_valtype>
+          <CE_stringval>0</CE_stringval>
+          <CE_doubleval>0.000000</CE_doubleval>
+          <CE_relop>0</CE_relop>
+          <CE_consumable>0</CE_consumable>
+          <CE_dominant>0</CE_dominant>
+          <CE_pj_doubleval>0.000000</CE_pj_doubleval>
+          <CE_pj_dominant>0</CE_pj_dominant>
+          <CE_requestable>0</CE_requestable>
+          <CE_tagged>0</CE_tagged>
+        </qstat_l_requests>
+      </JB_hard_resource_list>
+      <JB_shell_list>
+        <path_list>
+          <PN_path>/bin/bash</PN_path>
+          <PN_host></PN_host>
+          <PN_file_host></PN_file_host>
+          <PN_file_staging>false</PN_file_staging>
+        </path_list>
+      </JB_shell_list>
+      <JB_env_list>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_HOME</VA_variable>
+          <VA_value>/home/goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_LOGNAME</VA_variable>
+          <VA_value>goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_PATH</VA_variable>
+          <VA_value>/usr/local/texlive/2011/bin/x86_64-linux:/usr/local/python/2.7.1/bin:/usr/local/gdal/1.8.0/bin:/usr/local/giflib/4.1.6/bin:/usr/local/proj/4.7.0_gcc41/bin:/usr/local/netcdf/4.1.1_gcc41/bin:/usr/local/hdf5/1.8.6_gcc41/bin:/usr/local/hdf/4.2.7-netcdfless_gcc46/bin:/usr/local/ncarg/5.2.1/bin:/usr/local/emacs/23.3/bin:./:/home/goehler/bin/:/usr/local/sge/bin/lx24-amd64:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/opt/c3-4/:/usr/NX/bin:/usr/local/bin/</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_SHELL</VA_variable>
+          <VA_value>/bin/bash</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_MAIL</VA_variable>
+          <VA_value>/var/spool/mail/goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_HOST</VA_variable>
+          <VA_value>frontend1</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>__SGE_PREFIX__O_WORKDIR</VA_variable>
+          <VA_value>/gpfs0/home/goehler/sysbio/Optimization/Model_Zacharias</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MODULE_VERSION_STACK</VA_variable>
+          <VA_value>3.2.8</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MANPATH</VA_variable>
+          <VA_value>/usr/local/texlive/2011/texmf/doc/man:/usr/local/python/2.7.1/share/man:/usr/local/proj/4.7.0_gcc41/share/man:/usr/local/netcdf/4.1.1_gcc41/share/man:/usr/local/hdf/4.2.7-netcdfless_gcc46/share/man:/usr/local/ncarg/5.2.1/man:/usr/local/emacs/23.3/share/man:/usr/local/sge/man:/usr/share/man:/home/goehler/bin/man</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>HOSTNAME</VA_variable>
+          <VA_value>frontend1</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SHELL</VA_variable>
+          <VA_value>/bin/bash</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>TERM</VA_variable>
+          <VA_value>xterm</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>HISTSIZE</VA_variable>
+          <VA_value>100000</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SSH_CLIENT</VA_variable>
+          <VA_value>141.65.5.157 1123 22</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SSH_TTY</VA_variable>
+          <VA_value>/dev/pts/19</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LOCATE_PATH</VA_variable>
+          <VA_value>/global/locatedb/datadb:/global/locatedb/globdb:/global/locatedb/homedb</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>USER</VA_variable>
+          <VA_value>goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>HISTFILESIZE</VA_variable>
+          <VA_value>100000</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LS_COLORS</VA_variable>
+          <VA_value>no=00:fi=00:di=00;34:ln=00;36:pi=40;33:so=00;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:ex=00;32:*.cmd=00;32:*.exe=00;32:*.com=00;32:*.btm=00;32:*.bat=00;32:*.sh=00;32:*.csh=00;32:*.tar=00;31:*.tgz=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.zip=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.bz=00;31:*.tz=00;31:*.rpm=00;31:*.cpio=00;31:*.jpg=00;35:*.gif=00;35:*.bmp=00;35:*.xbm=00;35:*.xpm=00;35:*.png=00;35:*.tif=00;35:</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LD_LIBRARY_PATH</VA_variable>
+          <VA_value>/usr/local/python/2.7.1/lib:/usr/local/gdal/1.8.0/lib:/usr/local/intel/composerxe-2011.4.191/compiler/lib/intel64:/usr/local/giflib/4.1.6/lib:/usr/local/proj/4.7.0_gcc41/lib:/usr/local/netcdf/4.1.1_gcc41/lib:/usr/local/hdf5/1.8.6_gcc41/lib:/usr/local/szip/2.1_gcc41/lib:/usr/local/hdf/4.2.7-netcdfless_gcc46/lib:/usr/local/szip/2.1_gcc46/lib:/usr/local/ncarg/5.2.1/lib:/usr/local/emacs/23.3/lib:/usr/local/sge/lib/lx24-amd64/</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>PATH</VA_variable>
+          <VA_value>/usr/local/texlive/2011/bin/x86_64-linux:/usr/local/python/2.7.1/bin:/usr/local/gdal/1.8.0/bin:/usr/local/giflib/4.1.6/bin:/usr/local/proj/4.7.0_gcc41/bin:/usr/local/netcdf/4.1.1_gcc41/bin:/usr/local/hdf5/1.8.6_gcc41/bin:/usr/local/hdf/4.2.7-netcdfless_gcc46/bin:/usr/local/ncarg/5.2.1/bin:/usr/local/emacs/23.3/bin:./:/home/goehler/bin/:/usr/local/sge/bin/lx24-amd64:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/opt/c3-4/:/usr/NX/bin:/usr/local/bin/</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MAIL</VA_variable>
+          <VA_value>/var/spool/mail/goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MODULE_VERSION</VA_variable>
+          <VA_value>3.2.8</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>NXDIR</VA_variable>
+          <VA_value>/usr/NX</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>PWD</VA_variable>
+          <VA_value>/home/goehler/sysbio/Optimization/Model_Zacharias</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>INPUTRC</VA_variable>
+          <VA_value>/etc/inputrc</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>_LMFILES_</VA_variable>
+          <VA_value>/usr/local/Modules/modulefiles/base/sge/6.2u5:/usr/local/Modules/modulefiles/devel/emacs/23.3:/usr/local/Modules/modulefiles/libraries/szip/2.1_gcc46:/usr/local/Modules/modulefiles/libraries/hdf/4.2.7-netcdfless_gcc46:/usr/local/Modules/modulefiles/libraries/szip/2.1_gcc41:/usr/local/Modules/modulefiles/libraries/hdf5/1.8.6_gcc41:/usr/local/Modules/modulefiles/libraries/netcdf/4.1.1_gcc41:/usr/local/Modules/modulefiles/libraries/proj/4.7.0_gcc41:/usr/local/Modules/modulefiles/libraries/giflib/4.1.6:/usr/local/Modules/modulefiles/libraries/gdal/1.8.0_gcc41:/usr/local/Modules/modulefiles/tools/ncl/5.2.1:/usr/local/Modules/modulefiles/base/python/2.7.1:/usr/local/Modules/modulefiles/macros/ufzpython/2.7.1:/usr/local/Modules/modulefiles/base/texlive-latex/2011</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>JAVA_HOME</VA_variable>
+          <VA_value>/usr/java/latest</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>NCARG_ROOT</VA_variable>
+          <VA_value>/usr/local/ncarg/5.2.1</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LANG</VA_variable>
+          <VA_value>en_US.UTF-8</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MODULEPATH</VA_variable>
+          <VA_value>/usr/local/Modules/modulefiles/libraries:/usr/local/Modules/modulefiles/macros:/usr/local/Modules/modulefiles/base:/usr/local/Modules/modulefiles/compiler:/usr/local/Modules/modulefiles/devel:/usr/local/Modules/modulefiles/parallel:/usr/local/Modules/modulefiles/tools:/usr/local/Modules/modulefiles/database:/usr/local/Modules/modulefiles/archiving-compression:/usr/local/Modules/modulefiles/monitoring</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LOADEDMODULES</VA_variable>
+          <VA_value>sge/6.2u5:emacs/23.3:szip/2.1_gcc46:hdf/4.2.7-netcdfless_gcc46:szip/2.1_gcc41:hdf5/1.8.6_gcc41:netcdf/4.1.1_gcc41:proj/4.7.0_gcc41:giflib/4.1.6:gdal/1.8.0_gcc41:ncl/5.2.1:python/2.7.1:ufzpython/2.7.1:texlive-latex/2011</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SGE_ROOT</VA_variable>
+          <VA_value>/usr/local/sge</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>TEXLIVE_HOME</VA_variable>
+          <VA_value>/usr/local/texlive/2011</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SSH_ASKPASS</VA_variable>
+          <VA_value>/usr/libexec/openssh/gnome-ssh-askpass</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>HOME</VA_variable>
+          <VA_value>/home/goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SHLVL</VA_variable>
+          <VA_value>2</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LOGNAME</VA_variable>
+          <VA_value>goehler</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>PYTHONPATH</VA_variable>
+          <VA_value>/home/goehler/lib/PYTHON_chs_lib</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>SSH_CONNECTION</VA_variable>
+          <VA_value>141.65.5.157 1123 141.65.122.13 22</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>MODULESHOME</VA_variable>
+          <VA_value>/usr/local/Modules/3.2.8</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>LESSOPEN</VA_variable>
+          <VA_value>|/usr/bin/lesspipe.sh %s</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>DISPLAY</VA_variable>
+          <VA_value>localhost:11.0</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>G_BROKEN_FILENAMES</VA_variable>
+          <VA_value>1</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>PYTHON</VA_variable>
+          <VA_value>/usr/local/python/2.7.1/bin/python2.7</VA_value>
+        </job_sublist>
+        <job_sublist>
+          <VA_variable>_</VA_variable>
+          <VA_value>/usr/local/sge/bin/lx24-amd64/qsub</VA_value>
+        </job_sublist>
+      </JB_env_list>
+      <JB_script_file>qsub_tmp.sh</JB_script_file>
+      <JB_ja_tasks>
+        <ulong_sublist>
+          <JAT_status>128</JAT_status>
+          <JAT_task_number>1</JAT_task_number>
+          <JAT_scaled_usage_list>
+            <scaled>
+              <UA_name>cpu</UA_name>
+              <UA_value>414.040000</UA_value>
+            </scaled>
+            <scaled>
+              <UA_name>mem</UA_name>
+              <UA_value>17.690704</UA_value>
+            </scaled>
+            <scaled>
+              <UA_name>io</UA_name>
+              <UA_value>0.000299</UA_value>
+            </scaled>
+            <scaled>
+              <UA_name>iow</UA_name>
+              <UA_value>0.000000</UA_value>
+            </scaled>
+            <scaled>
+              <UA_name>vmem</UA_name>
+              <UA_value>111390720.000000</UA_value>
+            </scaled>
+            <scaled>
+              <UA_name>maxvmem</UA_name>
+              <UA_value>111390720.000000</UA_value>
+            </scaled>
+          </JAT_scaled_usage_list>
+        </ulong_sublist>
+      </JB_ja_tasks>
+      <JB_cwd>/home/goehler/sysbio/Optimization/Model_Zacharias</JB_cwd>
+      <JB_deadline>0</JB_deadline>
+      <JB_execution_time>0</JB_execution_time>
+      <JB_checkpoint_attr>0</JB_checkpoint_attr>
+      <JB_checkpoint_interval>0</JB_checkpoint_interval>
+      <JB_reserve>false</JB_reserve>
+      <JB_mail_options>0</JB_mail_options>
+      <JB_priority>1024</JB_priority>
+      <JB_restart>0</JB_restart>
+      <JB_verify>0</JB_verify>
+      <JB_script_size>0</JB_script_size>
+      <JB_verify_suitable_queues>0</JB_verify_suitable_queues>
+      <JB_soft_wallclock_gmt>0</JB_soft_wallclock_gmt>
+      <JB_hard_wallclock_gmt>0</JB_hard_wallclock_gmt>
+      <JB_override_tickets>0</JB_override_tickets>
+      <JB_version>0</JB_version>
+      <JB_ja_structure>
+        <task_id_range>
+          <RN_min>1</RN_min>
+          <RN_max>1</RN_max>
+          <RN_step>1</RN_step>
+        </task_id_range>
+      </JB_ja_structure>
+      <JB_type>0</JB_type>
+    </element>
+  </djob_info>
+  <messages>
+    <element>
+      <SME_global_message_list>
+        <element>
+          <MES_message_number>40</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node076&quot; dropped because it is temporarily not available</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node021&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node054&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node015&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node024&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node031&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node008&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node010&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node029&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node032&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node005&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node002&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node052&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node013&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node027&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node016&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node018&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node039&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node053&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node023&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node012&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node009&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node043&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node040&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node022&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node051&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node007&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node028&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node041&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node006&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node050&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node020&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node003&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node004&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node026&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node019&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node011&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node017&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;parallel@node030&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node057&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node035&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node033&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node060&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node036&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node073&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node064&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node055&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node037&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node070&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node059&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node061&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node034&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node063&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node074&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node056&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node038&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node072&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node071&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node062&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;batch@node058&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node069&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node047&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node078&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node075&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node077&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node082&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node068&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node065&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node066&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node080&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node083&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node084&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node046&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node044&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node067&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node048&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node079&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node049&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node045&quot; dropped because it is full</MES_message>
+        </element>
+        <element>
+          <MES_message_number>37</MES_message_number>
+          <MES_message>queue instance &quot;mixed@node081&quot; dropped because it is full</MES_message>
+        </element>
+      </SME_global_message_list>
+    </element>
+  </messages>
+</detailed_job_info>
