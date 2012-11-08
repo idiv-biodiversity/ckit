@@ -29,13 +29,13 @@ import language.postfixOps
 
 import org.specs2._
 
-class GridEngineParserSpec extends Specification { def is =
+class GridEngineSpec extends Specification { def is =
 
   // -----------------------------------------------------------------------------------------------
   // fragments
   // -----------------------------------------------------------------------------------------------
 
-  "Grid Engine Parser Specification"                                                               ^
+  "Grid Engine Specification"                                                                      ^
                                                                                                   p^
   "Job List Parsing"                                                                               ^
     "invalid target yields failure"                                   ! invalidList                ^
