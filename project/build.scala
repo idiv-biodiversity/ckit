@@ -39,8 +39,7 @@ object ClusterKitBuild extends Build {
     id        = "core",
     base      = file ("core"),
     settings  = baseSettings ++ Seq (
-      name := "ckit-core",
-      libraryDependencies ++= Seq ( conf, actor, remote, arm, specs2 )
+      name := "ckit-core"
     )
   )
 
@@ -54,7 +53,7 @@ object ClusterKitBuild extends Build {
     dependencies  = Seq ( core ),
     settings      = baseSettings ++ Seq (
       name := "ckit-daemon",
-      libraryDependencies ++= Seq ( arm, specs2 )
+      libraryDependencies ++= Seq ( actor, remote, specs2 )
     )
   )
 

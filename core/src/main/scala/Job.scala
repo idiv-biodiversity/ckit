@@ -45,7 +45,9 @@ case class JobDetail (
     project: String,
     account: String,
     requests: Map[String,String],
-    tasks: Map[String,Map[String,String]],
+    tasks: Seq[Task],
     messages: Seq[String],
     globalMessages: Seq[String]
   )
+
+case class Task(id: Int, usage: Map[String,String])

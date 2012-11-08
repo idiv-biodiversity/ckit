@@ -47,11 +47,11 @@ object GridEngine {
       value = (elem \ "UA_value").text
     } yield name → value
 
-    def tasks(xml: ⇒ NodeSeq): Seq[(String,Map[String,String])] = for {
+    def tasks(xml: ⇒ NodeSeq): Seq[Task] = for {
       task  ← xml \ "ulong_sublist"
       id    = (task \ "JAT_task_number").text if id.nonEmpty
       usage = taskUsage(task \ "JAT_scaled_usage_list").toMap if usage.nonEmpty
-    } yield id → usage
+    } yield Task(id.toInt, usage)
 
     def messages(xml: ⇒ NodeSeq): Seq[String] = for {
       message ← xml \\ "MES_message"
@@ -65,7 +65,7 @@ object GridEngine {
       project        = (xml \\ "JB_project").text,
       account        = (xml \\ "JB_account").text,
       requests       = requests(xml \\ "JB_hard_resource_list").toMap,
-      tasks          = tasks(xml \\ "JB_ja_tasks").toMap,
+      tasks          = tasks(xml \\ "JB_ja_tasks"),
       messages       = messages(xml \\ "SME_message_list"),
       globalMessages = messages(xml \\ "SME_global_message_list")
     )
@@ -94,11 +94,11 @@ object GridEngine {
     }
   }
 
-  def jobResourceList(xml: Node, resource: String): Option[String] = xml \ "hard_request" collectFirst {
+  private[GridEngine] def jobResourceList(xml: Node, resource: String): Option[String] = xml \ "hard_request" collectFirst {
     case xml if (xml \ "@name").text == resource ⇒ xml.text
   }
 
-  def job(xml: Node): Job = {
+  private[GridEngine] def job(xml: Node): Job = {
     val (q,n) = (xml \ "queue_name").text.trim match {
       case QueueInstance(q,n) ⇒ (q,n)
       case _                  ⇒ ("","")
