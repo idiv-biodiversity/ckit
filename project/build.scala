@@ -1,20 +1,23 @@
 import sbt._
 import Keys._
 
+import akka.sbt.AkkaKernelPlugin
+import akka.sbt.AkkaKernelPlugin.{ Dist, outputDirectory, distJvmOptions, distMainClass }
+
 import BuildSettings._
 import Dependencies._
 
 object BuildSettings {
-  lazy val buildOrganization = "ckit"
-  lazy val buildVersion      = "0.1.0-SNAPSHOT"
-  lazy val buildScalaVersion = "2.10.0-RC1"
-  lazy val akkaVersion       = "2.1.0-RC1"
-  lazy val latest            = "latest.integration"
+  lazy val Organization = "ckit"
+  lazy val Version      = "0.1.0-SNAPSHOT"
+  lazy val ScalaV       = "2.10.0-RC2"
+  lazy val AkkaV        = "2.1.0-RC2"
+  lazy val Latest       = "latest.integration"
 
   lazy val baseSettings = Defaults.defaultSettings ++ Seq (
-    organization   := buildOrganization,
-    version        := buildVersion,
-    scalaVersion   := buildScalaVersion
+    organization   := Organization,
+    version        := Version,
+    scalaVersion   := ScalaV
   )
 }
 
@@ -51,9 +54,12 @@ object ClusterKitBuild extends Build {
     id            = "daemon",
     base          = file ("daemon"),
     dependencies  = Seq ( core ),
-    settings      = baseSettings ++ Seq (
+    settings      = baseSettings ++ AkkaKernelPlugin.distSettings ++ Seq (
       name := "ckit-daemon",
-      libraryDependencies ++= Seq ( actor, remote, specs2 )
+      libraryDependencies ++= Seq ( actor, remote, kernel, slf4j, logger, specs2 ),
+      distJvmOptions in Dist := "-Xms512M -Xmx2048M -Xss1M -XX:MaxPermSize=512M -XX:+UseParallelGC",
+      distMainClass in Dist := "akka.kernel.Main ckit.daemon.ClusterKitDaemonKernel",
+      outputDirectory in Dist <<= target / "dist"
     )
   )
 
@@ -88,13 +94,16 @@ object Dependencies {
   // compile
   // -----------------------------------------------------------------------------------------------
 
-  lazy val swing  = "org.scala-lang"       %  "scala-swing" % buildScalaVersion                   // Modified BSD (Scala)
-  lazy val conf   = "com.typesafe"         %  "config"      % "1.0.0"                             // ApacheV2
-  lazy val actor  = "com.typesafe.akka"    %  "akka-actor"  % akkaVersion cross CrossVersion.full // ApacheV2
-  lazy val remote = "com.typesafe.akka"    %  "akka-remote" % akkaVersion cross CrossVersion.full // ApacheV2
-  lazy val time   = "org.scala-tools.time" %% "time"        % "0.5"                               // ApacheV2
-  lazy val arm    = "com.jsuereth"         %  "scala-arm"   % "1.2" cross CrossVersion.full       // Modified BSD (Scala)
-  lazy val chart  = "org.sfree"            %% "sfreechart"  % latest                              // LGPL
+  lazy val swing  = "org.scala-lang"       %  "scala-swing"     % ScalaV                        // Modified BSD (Scala)
+  lazy val conf   = "com.typesafe"         %  "config"          % "1.0.0"                       // ApacheV2
+  lazy val actor  = "com.typesafe.akka"    %  "akka-actor"      % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val remote = "com.typesafe.akka"    %  "akka-remote"     % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val kernel = "com.typesafe.akka"    %  "akka-kernel"     % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val slf4j  = "com.typesafe.akka"    %  "akka-slf4j"      % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val logger = "ch.qos.logback"       %  "logback-classic" % "1.0.7"                       // LGPL
+  lazy val time   = "org.scala-tools.time" %% "time"            % "0.5"                         // ApacheV2
+  lazy val arm    = "com.jsuereth"         %  "scala-arm"       % "1.2" cross CrossVersion.full // Modified BSD (Scala)
+  lazy val chart  = "org.sfree"            %% "sfreechart"      % Latest                        // LGPL
 
   // -----------------------------------------------------------------------------------------------
   // test
