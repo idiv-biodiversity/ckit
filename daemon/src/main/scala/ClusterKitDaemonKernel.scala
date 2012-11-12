@@ -31,10 +31,10 @@ import akka.actor.Props
 import akka.kernel.Bootable
 
 class ClusterKitDaemonKernel extends Bootable {
-  val system = ActorSystem("ckit-daemon")
+  val system = ActorSystem("ckit")
 
   def startup = {
-    system.actorOf(Props[GridEngineActor])
+    system.actorOf(Props[GridEngineActor], name = "grid-engine-actor")
   }
 
   def shutdown = {
