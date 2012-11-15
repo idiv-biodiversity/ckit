@@ -33,16 +33,20 @@ import scala.xml.XML
 
 class GridEngineActor extends Actor {
   def receive = {
-    case Protocol.JobList ⇒
-      sender ! GridEngine.jobList(XML.loadString("qstat -xml".!!))
+    case Protocol.JobList ⇒ for {
+      jobs ← GridEngine.jobList(XML.loadString("qstat -xml".!!))
+    } sender ! jobs
 
-    case Protocol.JobDetail(id: Int) ⇒
-      sender ! GridEngine.jobDetail(XML.loadString("qstat -xml -j %d".format(id).!!))
+    case Protocol.JobDetail(id: Int) ⇒ for {
+      detail ← GridEngine.jobDetail(XML.loadString("qstat -xml -j %d".format(id).!!))
+    } sender ! detail
 
-    case Protocol.QueueSummary ⇒
-      sender ! GridEngine.queueSummary(XML.loadString("qstat -xml -g c".!!))
+    case Protocol.QueueSummary ⇒ for {
+      summary ← GridEngine.queueSummary(XML.loadString("qstat -xml -g c".!!))
+    } sender ! summary
 
-    case Protocol.RuntimeSchedule ⇒
-      sender ! GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r".!!))
+    case Protocol.RuntimeSchedule ⇒ for {
+      schedule ← GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r".!!))
+    } sender ! schedule
   }
 }
