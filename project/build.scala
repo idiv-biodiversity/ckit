@@ -42,7 +42,8 @@ object ClusterKitBuild extends Build {
     id        = "core",
     base      = file ("core"),
     settings  = baseSettings ++ Seq (
-      name := "ckit-core"
+      name := "ckit-core",
+      libraryDependencies ++= Seq ( actor, remote )
     )
   )
 
@@ -56,7 +57,7 @@ object ClusterKitBuild extends Build {
     dependencies  = Seq ( core ),
     settings      = baseSettings ++ AkkaKernelPlugin.distSettings ++ Seq (
       name := "ckit-daemon",
-      libraryDependencies ++= Seq ( actor, remote, kernel, slf4j, logger, specs2 ),
+      libraryDependencies ++= Seq ( kernel, slf4j, logger, specs2 ),
       distJvmOptions in Dist := "-Xms512M -Xmx2048M -Xss1M -XX:MaxPermSize=512M -XX:+UseParallelGC",
       distMainClass in Dist := "akka.kernel.Main ckit.daemon.ClusterKitDaemonKernel",
       outputDirectory in Dist <<= target / "dist"
@@ -95,7 +96,6 @@ object Dependencies {
   // -----------------------------------------------------------------------------------------------
 
   lazy val swing  = "org.scala-lang"       %  "scala-swing"     % ScalaV                        // Modified BSD (Scala)
-  lazy val conf   = "com.typesafe"         %  "config"          % "1.0.0"                       // ApacheV2
   lazy val actor  = "com.typesafe.akka"    %  "akka-actor"      % AkkaV cross CrossVersion.full // ApacheV2
   lazy val remote = "com.typesafe.akka"    %  "akka-remote"     % AkkaV cross CrossVersion.full // ApacheV2
   lazy val kernel = "com.typesafe.akka"    %  "akka-kernel"     % AkkaV cross CrossVersion.full // ApacheV2
