@@ -37,6 +37,8 @@ case class Job (
     slots: Int
   )
 
+case class JobList(jobs: Seq[Job])
+
 case class JobDetail (
     name: String,
     id: String,
@@ -51,3 +53,5 @@ case class JobDetail (
   )
 
 case class Task(id: Int, usage: Map[String,String])
+
+case class RuntimeSchedule(jobs: Seq[(Job,Int)])

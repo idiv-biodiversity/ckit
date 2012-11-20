@@ -35,3 +35,5 @@ case class QueueSummary (
     temporaryUnavailable: Int,
     unavailable: Int
   )
+
+case class QueueSummaryList(summaries: Seq[QueueSummary])

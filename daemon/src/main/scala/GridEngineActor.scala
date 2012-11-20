@@ -35,7 +35,7 @@ class GridEngineActor extends Actor {
   def receive = {
     case Protocol.JobList ⇒ for {
       jobs ← GridEngine.jobList(XML.loadString("qstat -xml".!!))
-    } sender ! jobs
+    } sender ! JobList(jobs)
 
     case Protocol.JobDetail(id: Int) ⇒ for {
       detail ← GridEngine.jobDetail(XML.loadString("qstat -xml -j %d".format(id).!!))
@@ -43,10 +43,10 @@ class GridEngineActor extends Actor {
 
     case Protocol.QueueSummary ⇒ for {
       summary ← GridEngine.queueSummary(XML.loadString("qstat -xml -g c".!!))
-    } sender ! summary
+    } sender ! QueueSummaryList(summary)
 
     case Protocol.RuntimeSchedule ⇒ for {
       schedule ← GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r".!!))
-    } sender ! schedule
+    } sender ! RuntimeSchedule(schedule)
   }
 }
