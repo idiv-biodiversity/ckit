@@ -34,7 +34,7 @@ import scala.xml.XML
 class GridEngineActor extends Actor {
   def receive = {
     case Protocol.JobList ⇒ for {
-      jobs ← GridEngine.jobList(XML.loadString("qstat -xml".!!))
+      jobs ← GridEngine.jobList(XML.loadString("qstat -xml -u *".!!))
     } sender ! JobList(jobs)
 
     case Protocol.JobDetail(id: Int) ⇒ for {
@@ -46,7 +46,7 @@ class GridEngineActor extends Actor {
     } sender ! QueueSummaryList(summary)
 
     case Protocol.RuntimeSchedule ⇒ for {
-      schedule ← GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r".!!))
+      schedule ← GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r -u *".!!))
     } sender ! RuntimeSchedule(schedule)
   }
 }
