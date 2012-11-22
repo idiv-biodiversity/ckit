@@ -95,15 +95,15 @@ object Dependencies {
   // compile
   // -----------------------------------------------------------------------------------------------
 
-  lazy val swing  = "org.scala-lang"       %  "scala-swing"     % ScalaV                        // Modified BSD (Scala)
-  lazy val actor  = "com.typesafe.akka"    %  "akka-actor"      % AkkaV cross CrossVersion.full // ApacheV2
-  lazy val remote = "com.typesafe.akka"    %  "akka-remote"     % AkkaV cross CrossVersion.full // ApacheV2
-  lazy val kernel = "com.typesafe.akka"    %  "akka-kernel"     % AkkaV cross CrossVersion.full // ApacheV2
-  lazy val slf4j  = "com.typesafe.akka"    %  "akka-slf4j"      % AkkaV cross CrossVersion.full // ApacheV2
-  lazy val logger = "ch.qos.logback"       %  "logback-classic" % "1.0.7"                       // LGPL
-  lazy val time   = "org.scala-tools.time" %% "time"            % "0.5"                         // ApacheV2
-  lazy val arm    = "com.jsuereth"         %  "scala-arm"       % "1.2" cross CrossVersion.full // Modified BSD (Scala)
-  lazy val chart  = "org.sfree"            %% "sfreechart"      % Latest                        // LGPL
+  lazy val swing  = "org.scala-lang"                      %  "scala-swing"     % ScalaV                        // Modified BSD (Scala)
+  lazy val actor  = "com.typesafe.akka"                   %  "akka-actor"      % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val remote = "com.typesafe.akka"                   %  "akka-remote"     % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val kernel = "com.typesafe.akka"                   %  "akka-kernel"     % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val slf4j  = "com.typesafe.akka"                   %  "akka-slf4j"      % AkkaV cross CrossVersion.full // ApacheV2
+  lazy val logger = "ch.qos.logback"                      %  "logback-classic" % "1.0.7"                       // LGPL
+  lazy val time   = "org.scala-tools.time"                %% "time"            % "0.5"                         // ApacheV2
+  lazy val arm    = "com.jsuereth"                        %  "scala-arm"       % "1.2" cross CrossVersion.full // Modified BSD (Scala)
+  lazy val chart  = "com.github.wookietreiber.sfreechart" %% "sfreechart"      % Latest                        // LGPL
 
   // -----------------------------------------------------------------------------------------------
   // test
