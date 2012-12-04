@@ -36,13 +36,13 @@ trait GridEngine {
 
   def jobDetail(id: Int): Try[JobDetail] = jobDetail(xmlJobInfo(id))
 
-  def jobList: Try[Seq[Job]] = jobList(xmlJobList())
+  def jobList: Try[Seq[Job]] = jobList()
 
   def jobList(user: Option[String] = None, resources: Boolean = false): Try[Seq[Job]] =
     jobList(xmlJobList(user, resources))
 
   def runtimeSchedule: Try[Seq[ScheduleTask]] =
-    runtimeSchedule(xmlNodeJobList, xmlJobList(resources = true))
+    runtimeSchedule(xmlNodeJobList, xmlJobList(None, true))
 
   def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
 
@@ -107,24 +107,20 @@ trait GridEngine {
   private[daemon] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[ScheduleTask]] = Try {
     val qhostxml: Elem = qhost
 
-    val jobs = jobList(qstat) map { _.map(j ⇒ j.id → j).toMap } getOrElse Map()
+    val jobs = jobList(qstat).get.map(j ⇒ j.id → j).toMap
 
     for {
       host     ← qhostxml \ "host"
       hostname = (host \ "@name").text if hostname != "global"
       qhostjob ← host \ "job"
       id       = (qhostjob \ "@name").text.toInt
-      qstatjob = jobs(id)
+      qstatjob ← jobs.get(id)
       jobname  = qstatjob.name
       start    = qstatjob.start
-      runtime  = qstatjob.requests.get("h_rt") flatMap { value ⇒
+      runtime  ← qstatjob.requests.get("h_rt") flatMap { value ⇒
         Try(value.toLong * 1000).toOption
       }
-    } yield (hostname, id, jobname, start, runtime)
-  } map {
-    _ collect {
-      case (host, id, name, start, Some(rt)) ⇒ ScheduleTask(host, id, name, start, rt)
-    }
+    } yield ScheduleTask(hostname, id, jobname, start, runtime)
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -165,9 +161,9 @@ trait GridEngine {
 
   private[GridEngine] def xmlJobInfo(id: Int): Elem = XML.loadString(s"qstat -xml -j $id".!!)
 
-  private[GridEngine] def xmlJobList(user: Option[String] = None, resources: Boolean = false): Elem = {
+  private[GridEngine] def xmlJobList(user: Option[String], resources: Boolean): Elem = {
     val command = "qstat -xml" + { if (resources) " -r" else " " } + { " -u " + user.getOrElse("*") }
-    XML.loadString(command)
+    XML.loadString(command.!!)
   }
 
   private[GridEngine] def xmlNodeJobList: Elem = XML.loadString("qhost -xml -j".!!)
