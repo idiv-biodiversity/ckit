@@ -26,27 +26,40 @@
 package ckit
 package daemon
 
+import sys.process._
+import util._
+import xml.XML
+
 import akka.actor.Actor
+import akka.event.Logging
 
-import scala.sys.process._
-import scala.xml.XML
+class GridEngineActor extends Actor with GridEngine {
+  val log = Logging(context.system, this)
 
-class GridEngineActor extends Actor {
   def receive = {
-    case Protocol.JobList ⇒ for {
-      jobs ← GridEngine.jobList(XML.loadString("qstat -xml -u *".!!))
-    } sender ! JobList(jobs)
+    case msg @ Protocol.JobList ⇒ jobList match {
+      case     Success(jobs)   ⇒ sender ! JobList(jobs)
+      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    }
 
-    case Protocol.JobDetail(id: Int) ⇒ for {
-      detail ← GridEngine.jobDetail(XML.loadString("qstat -xml -j %d".format(id).!!))
-    } sender ! detail
+    case msg @ Protocol.JobDetail(id) ⇒ jobDetail(id) match {
+      case     Success(detail) ⇒ sender ! detail
+      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    }
 
-    case Protocol.QueueSummary ⇒ for {
-      summary ← GridEngine.queueSummary(XML.loadString("qstat -xml -g c".!!))
-    } sender ! QueueSummaryList(summary)
+    case msg @ Protocol.QueueSummary ⇒ queueSummary match {
+      case     Success(summary) ⇒ sender ! QueueSummaryList(summary)
+      case f @ Failure(reason)  ⇒ handleFailure(f, reason, msg)
+    }
 
-    case Protocol.RuntimeSchedule ⇒ for {
-      schedule ← GridEngine.runtimeSchedule(XML.loadString("qstat -xml -r -u *".!!))
-    } sender ! RuntimeSchedule(schedule)
+    case msg @ Protocol.RuntimeSchedule ⇒ runtimeSchedule match {
+      case     Success(schedule) ⇒ sender ! RuntimeSchedule(schedule)
+      case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
+    }
+  }
+
+  def handleFailure(failure: Failure[_], reason: Throwable, message: Any) {
+    log.error(reason, "Failure due to [{}] when processing [{}].", reason.getMessage, message)
+    sender ! failure
   }
 }

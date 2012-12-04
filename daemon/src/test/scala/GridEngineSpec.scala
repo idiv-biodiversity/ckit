@@ -30,7 +30,7 @@ import language.postfixOps
 
 import org.specs2._
 
-class GridEngineSpec extends Specification { def is =
+class GridEngineSpec extends Specification with GridEngine { def is =
 
   // -----------------------------------------------------------------------------------------------
   // fragments
@@ -100,18 +100,18 @@ class GridEngineSpec extends Specification { def is =
     _.name
   } must contain ("batch", "highmem", "mixed", "parallel").only.inOrder
 
-  def invalidSchedule = schedule("").isFailure must beTrue
-  def emptySchedule = schedule("/qstat-job-list-empty.xml").get must have size 0
-  def nonEmptySchedule = schedule("/qstat-resource-job-list.xml").get must have size 1
+  def invalidSchedule = schedule("", "").isFailure must beTrue
+  def emptySchedule = schedule("/qhost-jobs-empty.xml", "/qstat-job-list-empty.xml").get must have size 0
+  def nonEmptySchedule = schedule("/qhost-jobs.xml", "/qstat-resource-job-list.xml").get must have size 1
 
   // -----------------------------------------------------------------------------------------------
   // util
   // -----------------------------------------------------------------------------------------------
 
   def XML(res: String) = scala.xml.XML.load(getClass.getResource(res))
-  def list(res: String) = GridEngine.jobList(XML(res))
-  def detail(res: String) = GridEngine.jobDetail(XML(res))
-  def summary(res: String) = GridEngine.queueSummary(XML(res))
-  def schedule(res: String) = GridEngine.runtimeSchedule(XML(res))
+  def list(res: String) = jobList(XML(res))
+  def detail(res: String) = jobDetail(XML(res))
+  def summary(res: String) = queueSummary(XML(res))
+  def schedule(r1: String, r2: String) = runtimeSchedule(XML(r1), XML(r2))
 
 }

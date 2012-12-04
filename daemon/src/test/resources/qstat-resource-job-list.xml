@@ -2,7 +2,7 @@
 <job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
   <queue_info>
     <job_list state="running">
-      <JB_job_number>365178</JB_job_number>
+      <JB_job_number>392356</JB_job_number>
       <JAT_prio>0.60101</JAT_prio>
       <JB_name>mpi-info-openmpi-1.6.3-gcc-4.7.1</JB_name>
       <JB_owner>krausec</JB_owner>

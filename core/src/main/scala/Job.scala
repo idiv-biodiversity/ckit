@@ -34,7 +34,8 @@ case class Job (
     start: String,
     queue: String,
     node: String,
-    slots: Int
+    slots: Int,
+    requests: Map[String,String]
   )
 
 case class JobList(jobs: Seq[Job])
@@ -54,4 +55,4 @@ case class JobDetail (
 
 case class Task(id: Int, usage: Map[String,String])
 
-case class RuntimeSchedule(jobs: Seq[(Job,Int)])
+case class RuntimeSchedule(jobs: Seq[(String,Int,String,String,Int)])

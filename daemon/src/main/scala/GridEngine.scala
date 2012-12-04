@@ -26,18 +26,35 @@
 package ckit
 package daemon
 
-import scala.util.Try
-import scala.xml._
+import sys.process._
+import util.Try
+import xml._
 
-object GridEngine {
+object GridEngine extends GridEngine
 
-  private[GridEngine] val QueueInstance = """(.+)@(.+)""".r
+trait GridEngine {
 
-  def jobList(xml: ⇒ Elem): Try[Seq[Job]] = Try {
+  def jobDetail(id: Int): Try[JobDetail] = jobDetail(xmlJobInfo(id))
+
+  def jobList: Try[Seq[Job]] = jobList(xmlJobList())
+
+  def jobList(user: Option[String] = None, resources: Boolean = false): Try[Seq[Job]] =
+    jobList(xmlJobList(user, resources))
+
+  def runtimeSchedule: Try[Seq[(String,Int,String,String,Int)]] =
+    runtimeSchedule(xmlNodeJobList, xmlJobList(resources = true))
+
+  def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
+
+  // -----------------------------------------------------------------------------------------------
+  // testing interface
+  // -----------------------------------------------------------------------------------------------
+
+  private[daemon] def jobList(xml: ⇒ Elem): Try[Seq[Job]] = Try {
     xml \\ "job_list" map job
   }
 
-  def jobDetail(xml: ⇒ Elem): Try[JobDetail] = Try {
+  private[daemon] def jobDetail(xml: ⇒ Elem): Try[JobDetail] = Try {
     def requests(xml: ⇒ NodeSeq): Seq[(String,String)] = xml \ "qstat_l_requests" map { xml ⇒
       (xml \ "CE_name").text → (xml \ "CE_stringval").text
     }
@@ -72,7 +89,7 @@ object GridEngine {
     )
   }
 
-  def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
+  private[daemon] def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
     xml \ "cluster_queue_summary" map { xml ⇒
       QueueSummary (
         name                 = (xml \ "name").text,
@@ -87,22 +104,45 @@ object GridEngine {
     }
   }
 
-  def runtimeSchedule(xml: ⇒ Elem): Try[Seq[(Job,Int)]] = Try {
-    xml \ "queue_info" \ "job_list" map { xml ⇒
-      (job(xml), jobResourceList(xml, "h_rt"))
-    } collect {
-      case (job,Some(runtime)) ⇒ (job,runtime.toInt)
+  private[daemon] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[(String,Int,String,String,Int)]] = Try {
+    val qhostxml: Elem = qhost
+
+    val jobs = jobList(qstat) map { _.map(j ⇒ j.id → j).toMap } getOrElse Map()
+
+    for {
+      host     ← qhostxml \ "host"
+      hostname = (host \ "@name").text if hostname != "global"
+      qhostjob ← host \ "job"
+      id       = (qhostjob \ "@name").text.toInt
+      qstatjob = jobs(id)
+      jobname  = qstatjob.name
+      start    = qstatjob.start
+      runtime  = qstatjob.requests.get("h_rt") flatMap { value ⇒
+        Try(value.toInt).toOption
+      }
+    } yield (hostname, id, jobname, start, runtime)
+  } map {
+    _ collect {
+      case (host, id, name, start, Some(rt)) ⇒ (host, id, name, start, rt)
     }
   }
 
-  private[GridEngine] def jobResourceList(xml: Node, resource: String): Option[String] = xml \ "hard_request" collectFirst {
-    case xml if (xml \ "@name").text == resource ⇒ xml.text
-  }
+  // -----------------------------------------------------------------------------------------------
+  // private members
+  // -----------------------------------------------------------------------------------------------
+
+  private[GridEngine] val QueueInstance = """(.+)@(.+)""".r
 
   private[GridEngine] def job(xml: Node): Job = {
     val (q,n) = (xml \ "queue_name").text.trim match {
       case QueueInstance(q,n) ⇒ (q,n)
       case _                  ⇒ ("","")
+    }
+
+    val rs = xml \ "hard_request" map { xml ⇒
+      val name  = (xml \ "@name").text
+      val value = xml.text
+      name → value
     }
 
     Job (
@@ -114,8 +154,24 @@ object GridEngine {
       start    = (xml \ "JAT_start_time").text,
       queue    = q,
       node     = n,
-      slots    = (xml \ "slots").text.toInt
+      slots    = (xml \ "slots").text.toInt,
+      requests = rs.toMap
     )
   }
+
+  // -----------------------------------------------------------------------------------------------
+  // direct interface to the grid engine
+  // -----------------------------------------------------------------------------------------------
+
+  private[GridEngine] def xmlJobInfo(id: Int): Elem = XML.loadString(s"qstat -xml -j $id".!!)
+
+  private[GridEngine] def xmlJobList(user: Option[String] = None, resources: Boolean = false): Elem = {
+    val command = "qstat -xml" + { if (resources) " -r" else " " } + { " -u " + user.getOrElse("*") }
+    XML.loadString(command)
+  }
+
+  private[GridEngine] def xmlNodeJobList: Elem = XML.loadString("qhost -xml -j".!!)
+
+  private[GridEngine] def xmlQueueSummary: Elem = XML.loadString("qstat -xml -g c".!!)
 
 }

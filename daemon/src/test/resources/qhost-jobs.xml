@@ -1,0 +1,31 @@
+<?xml version='1.0'?>
+<qhost xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qhost/qhost.xsd?revision=1.2">
+ <host name='global'>
+   <hostvalue name='arch_string'>-</hostvalue>
+   <hostvalue name='num_proc'>-</hostvalue>
+   <hostvalue name='load_avg'>-</hostvalue>
+   <hostvalue name='mem_total'>-</hostvalue>
+   <hostvalue name='mem_used'>-</hostvalue>
+   <hostvalue name='swap_total'>-</hostvalue>
+   <hostvalue name='swap_used'>-</hostvalue>
+ </host>
+ <host name='node001'>
+   <hostvalue name='arch_string'>lx24-amd64</hostvalue>
+   <hostvalue name='num_proc'>12</hostvalue>
+   <hostvalue name='load_avg'>12.08</hostvalue>
+   <hostvalue name='mem_total'>62.9G</hostvalue>
+   <hostvalue name='mem_used'>3.0G</hostvalue>
+   <hostvalue name='swap_total'>0.0</hostvalue>
+   <hostvalue name='swap_used'>0.0</hostvalue>
+ <job name='392356'>
+   <jobvalue jobid='392356' name='priority'>'0.522206'</jobvalue>
+   <jobvalue jobid='392356' name='qinstance_name'>parallel@node001</jobvalue>
+   <jobvalue jobid='392356' name='job_name'>test</jobvalue>
+   <jobvalue jobid='392356' name='job_owner'>krausec</jobvalue>
+   <jobvalue jobid='392356' name='job_state'>r</jobvalue>
+   <jobvalue jobid='392356' name='start_time'>1354280935</jobvalue>
+   <jobvalue jobid='392356' name='queue_name'>all.q@node001</jobvalue>
+   <jobvalue jobid='392356' name='pe_master'>MASTER</jobvalue>
+ </job>
+ </host>
+</qhost>
