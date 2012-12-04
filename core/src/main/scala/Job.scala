@@ -55,4 +55,6 @@ case class JobDetail (
 
 case class Task(id: Int, usage: Map[String,String])
 
-case class RuntimeSchedule(jobs: Seq[(String,Int,String,String,Int)])
+case class ScheduleTask(node: String, id: Int, name: String, start: String, runtime: Long)
+
+case class RuntimeSchedule(jobs: Seq[ScheduleTask])

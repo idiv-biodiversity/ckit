@@ -41,7 +41,7 @@ trait GridEngine {
   def jobList(user: Option[String] = None, resources: Boolean = false): Try[Seq[Job]] =
     jobList(xmlJobList(user, resources))
 
-  def runtimeSchedule: Try[Seq[(String,Int,String,String,Int)]] =
+  def runtimeSchedule: Try[Seq[ScheduleTask]] =
     runtimeSchedule(xmlNodeJobList, xmlJobList(resources = true))
 
   def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
@@ -104,7 +104,7 @@ trait GridEngine {
     }
   }
 
-  private[daemon] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[(String,Int,String,String,Int)]] = Try {
+  private[daemon] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[ScheduleTask]] = Try {
     val qhostxml: Elem = qhost
 
     val jobs = jobList(qstat) map { _.map(j ⇒ j.id → j).toMap } getOrElse Map()
@@ -118,12 +118,12 @@ trait GridEngine {
       jobname  = qstatjob.name
       start    = qstatjob.start
       runtime  = qstatjob.requests.get("h_rt") flatMap { value ⇒
-        Try(value.toInt).toOption
+        Try(value.toLong * 1000).toOption
       }
     } yield (hostname, id, jobname, start, runtime)
   } map {
     _ collect {
-      case (host, id, name, start, Some(rt)) ⇒ (host, id, name, start, rt)
+      case (host, id, name, start, Some(rt)) ⇒ ScheduleTask(host, id, name, start, rt)
     }
   }
 
