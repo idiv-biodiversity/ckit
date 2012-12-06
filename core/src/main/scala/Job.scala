@@ -25,6 +25,27 @@
 
 package ckit
 
+import java.awt.Color
+
+object Job {
+  lazy val DeletedRE = "d.*".r
+  lazy val ErrorRE = "E.*".r
+  lazy val PendingRE = "[^E]*qw".r
+  lazy val RunningRE = "[^dE]*[rt]".r
+  lazy val SuspendedRE = "[^dE]*[sST]".r
+
+  sealed abstract class StateCategory(val color: Color, val light: Color)
+
+  case object Running   extends StateCategory(Color.GREEN,  new Color(200, 255, 200))
+  case object Suspended extends StateCategory(Color.YELLOW, new Color(255, 255, 200))
+  case object Pending   extends StateCategory(Color.BLUE,   new Color(200, 200, 255))
+  case object Deleted   extends StateCategory(Color.ORANGE, new Color(255, 225, 140))
+  case object Error     extends StateCategory(Color.RED,    new Color(255, 200, 200))
+  case object Unknown   extends StateCategory(Color.GRAY,   new Color(200, 200, 200))
+
+  case class State(name: String, category: StateCategory)
+}
+
 case class Job (
     id: Int,
     priority: Double,

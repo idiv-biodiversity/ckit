@@ -38,6 +38,44 @@ class GridEngineSpec extends Specification with GridEngine { def is =
 
   "Grid Engine Specification"                                                                      ^
                                                                                                   p^
+  "Job State Parsing"                                                                              ^
+    "Deleted States"                                                                               ^
+      """parsing state "dr""""                                        ! dparse("dr")               ^
+      """parsing state "dt""""                                        ! dparse("dt")               ^
+      """parsing state "dRr""""                                       ! dparse("dRr")              ^
+      """parsing state "ds""""                                        ! dparse("ds")               ^
+      """parsing state "dS""""                                        ! dparse("dS")               ^
+      """parsing state "dT""""                                        ! dparse("dT")               ^
+      """parsing state "dRs""""                                       ! dparse("dRs")              ^
+      """parsing state "dRS""""                                       ! dparse("dRS")              ^
+      """parsing state "dRT""""                                       ! dparse("dRT")           ^bt^
+    "Error States"                                                                                 ^
+      """parsing state "Eqw""""                                       ! eparse("Eqw")              ^
+      """parsing state "Ehqw""""                                      ! eparse("Ehqw")             ^
+      """parsing state "EhRqw""""                                     ! eparse("EhRqw")         ^bt^
+    "Pending States"                                                                               ^
+      """parsing state "qw""""                                        ! pparse("qw")               ^
+      """parsing state "hqw""""                                       ! pparse("hqw")              ^
+      """parsing state "hRqw""""                                      ! pparse("hRqw")          ^bt^
+    "Running States"                                                                               ^
+      """parsing state "r""""                                         ! rparse("r")                ^
+      """parsing state "t""""                                         ! rparse("t")                ^
+      """parsing state "Rr""""                                        ! rparse("Rr")               ^
+      """parsing state "Rt""""                                        ! rparse("Rt")            ^bt^
+    "Suspended States"                                                                             ^
+      """parsing state "s""""                                         ! sparse("s")                ^
+      """parsing state "ts""""                                        ! sparse("ts")               ^
+      """parsing state "S""""                                         ! sparse("S")                ^
+      """parsing state "tS""""                                        ! sparse("tS")               ^
+      """parsing state "T""""                                         ! sparse("T")                ^
+      """parsing state "tT""""                                        ! sparse("tT")               ^
+      """parsing state "Rs""""                                        ! sparse("Rs")               ^
+      """parsing state "Rts""""                                       ! sparse("Rts")              ^
+      """parsing state "RS""""                                        ! sparse("RS")               ^
+      """parsing state "RtS""""                                       ! sparse("RtS")              ^
+      """parsing state "RT""""                                        ! sparse("RT")               ^
+      """parsing state "RtT""""                                       ! sparse("RtT")           ^bt^
+                                                                                                  p^
   "Job List Parsing"                                                                               ^
     "invalid target yields failure"                                   ! invalidList                ^
     "empty target yields empty collection"                            ! emptyList                  ^
@@ -103,6 +141,14 @@ class GridEngineSpec extends Specification with GridEngine { def is =
   def invalidSchedule = schedule("", "").isFailure must beTrue
   def emptySchedule = schedule("/qhost-jobs-empty.xml", "/qstat-job-list-empty.xml").get must have size 0
   def nonEmptySchedule = schedule("/qhost-jobs.xml", "/qstat-resource-job-list.xml").get must have size 1
+
+  import Job._
+
+  def dparse(state: String) = DeletedRE.unapplySeq(state) must beSome
+  def eparse(state: String) = ErrorRE.unapplySeq(state) must beSome
+  def pparse(state: String) = PendingRE.unapplySeq(state) must beSome
+  def rparse(state: String) = RunningRE.unapplySeq(state) must beSome
+  def sparse(state: String) = SuspendedRE.unapplySeq(state) must beSome
 
   // -----------------------------------------------------------------------------------------------
   // util
