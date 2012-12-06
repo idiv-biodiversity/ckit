@@ -24,7 +24,6 @@
 
 
 package ckit
-package daemon
 
 import sys.process._
 import util.Try
@@ -33,6 +32,13 @@ import xml._
 object GridEngine extends GridEngine
 
 trait GridEngine {
+
+  lazy val deleted   = State("deleted", Deleted)
+  lazy val error     = State("error", Error)
+  lazy val pending   = State("pending", Pending)
+  lazy val running   = State("running", Running)
+  lazy val suspended = State("suspended", Suspended)
+  lazy val unknown   = State("unknown", Unknown)
 
   def jobDetail(id: Int): Try[JobDetail] = jobDetail(xmlJobInfo(id))
 
@@ -50,11 +56,17 @@ trait GridEngine {
   // testing interface
   // -----------------------------------------------------------------------------------------------
 
-  private[daemon] def jobList(xml: ⇒ Elem): Try[Seq[Job]] = Try {
+  private[ckit] lazy val DeletedRE = "d.*".r
+  private[ckit] lazy val ErrorRE = "E.*".r
+  private[ckit] lazy val PendingRE = "[^E]*qw".r
+  private[ckit] lazy val RunningRE = "[^dE]*[rt]".r
+  private[ckit] lazy val SuspendedRE = "[^dE]*[sST]".r
+
+  private[ckit] def jobList(xml: ⇒ Elem): Try[Seq[Job]] = Try {
     xml \\ "job_list" map job
   }
 
-  private[daemon] def jobDetail(xml: ⇒ Elem): Try[JobDetail] = Try {
+  private[ckit] def jobDetail(xml: ⇒ Elem): Try[JobDetail] = Try {
     def requests(xml: ⇒ NodeSeq): Seq[(String,String)] = xml \ "qstat_l_requests" map { xml ⇒
       (xml \ "CE_name").text → (xml \ "CE_stringval").text
     }
@@ -89,7 +101,7 @@ trait GridEngine {
     )
   }
 
-  private[daemon] def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
+  private[ckit] def queueSummary(xml: ⇒ Elem): Try[Seq[QueueSummary]] = Try {
     xml \ "cluster_queue_summary" map { xml ⇒
       QueueSummary (
         name                 = (xml \ "name").text,
@@ -104,7 +116,7 @@ trait GridEngine {
     }
   }
 
-  private[daemon] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[ScheduleTask]] = Try {
+  private[ckit] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[ScheduleTask]] = Try {
     val qhostxml: Elem = qhost
 
     val jobs = jobList(qstat).get.map(j ⇒ j.id → j).toMap
@@ -129,6 +141,15 @@ trait GridEngine {
 
   private[GridEngine] val QueueInstance = """(.+)@(.+)""".r
 
+  private[GridEngine] def state(s: String): State = s match {
+    case DeletedRE()   ⇒ deleted
+    case ErrorRE()     ⇒ error
+    case PendingRE()   ⇒ pending
+    case RunningRE()   ⇒ running
+    case SuspendedRE() ⇒ suspended
+    case _             ⇒ unknown
+  }
+
   private[GridEngine] def job(xml: Node): Job = {
     val (q,n) = (xml \ "queue_name").text.trim match {
       case QueueInstance(q,n) ⇒ (q,n)
@@ -146,7 +167,7 @@ trait GridEngine {
       priority = (xml \ "JAT_prio").text.toDouble,
       name     = (xml \ "JB_name").text,
       owner    = (xml \ "JB_owner").text,
-      state    = (xml \ "state").text,
+      state    = state((xml \ "state").text),
       start    = (xml \ "JAT_start_time").text,
       queue    = q,
       node     = n,
