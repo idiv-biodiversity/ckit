@@ -43,7 +43,7 @@ object ClusterKitBuild extends Build {
     base      = file ("core"),
     settings  = baseSettings ++ Seq (
       name := "ckit-core",
-      libraryDependencies ++= Seq ( actor, remote )
+      libraryDependencies ++= Seq ( actor, remote, specs )
     )
   )
 
@@ -57,7 +57,7 @@ object ClusterKitBuild extends Build {
     dependencies  = Seq ( core ),
     settings      = baseSettings ++ AkkaKernelPlugin.distSettings ++ Seq (
       name := "ckit-daemon",
-      libraryDependencies ++= Seq ( kernel, slf4j, logger, specs2 ),
+      libraryDependencies ++= Seq ( kernel, slf4j, logger, specs ),
       distJvmOptions in Dist := "-Xms512M -Xmx2048M -Xss1M -XX:MaxPermSize=512M -XX:+UseParallelGC",
       distMainClass in Dist := "akka.kernel.Main ckit.daemon.ClusterKitDaemonKernel",
       outputDirectory in Dist <<= target / "dist"
@@ -109,6 +109,6 @@ object Dependencies {
   // test
   // -----------------------------------------------------------------------------------------------
 
-  lazy val specs2 = "org.specs2" % "specs2" % "1.12.3" % "test" cross CrossVersion.full
+  lazy val specs = "org.specs2" % "specs2" % "1.12.3" % "test" cross CrossVersion.full
 
 }
