@@ -27,11 +27,52 @@ package ckit
 
 import java.awt.Color
 
-sealed abstract class StateCategory(val color: Color, val light: Color)
+object StateCategory {
+  implicit val ordering: Ordering[StateCategory] = new Ordering[StateCategory] {
+    override def compare(a: StateCategory, b: StateCategory): Int = {
+      a.id.compareTo(b.id)
+    }
+  }
+}
 
-case object Deleted   extends StateCategory(Color.ORANGE, new Color(255, 225, 140))
-case object Error     extends StateCategory(Color.RED,    new Color(255, 200, 200))
-case object Pending   extends StateCategory(Color.BLUE,   new Color(200, 200, 255))
-case object Running   extends StateCategory(Color.GREEN,  new Color(200, 255, 200))
-case object Suspended extends StateCategory(Color.YELLOW, new Color(255, 255, 200))
-case object Unknown   extends StateCategory(Color.GRAY,   new Color(200, 200, 200))
+sealed abstract class StateCategory {
+  def id: Int
+  def color: Color
+  def light: Color
+}
+
+case object Running extends StateCategory {
+  val id = 0
+  val color = Color.GREEN
+  val light = new Color(200, 255, 200)
+}
+
+case object Suspended extends StateCategory {
+  val id = 1
+  val color = Color.YELLOW
+  val light = new Color(255, 255, 200)
+}
+
+case object Pending extends StateCategory {
+  val id = 2
+  val color = Color.BLUE
+  val light = new Color(200, 200, 255)
+}
+
+case object Deleted extends StateCategory {
+  val id = 3
+  val color = Color.ORANGE
+  val light = new Color(255, 225, 140)
+}
+
+case object Error extends StateCategory {
+  val id = 4
+  val color = Color.RED
+  val light = new Color(255, 200, 200)
+}
+
+case object Unknown extends StateCategory {
+  val id = 5
+  val color = Color.GRAY
+  val light = new Color(200, 200, 200)
+}

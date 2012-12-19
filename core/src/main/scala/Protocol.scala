@@ -27,6 +27,7 @@ package ckit
 
 object Protocol {
   case object JobList
+  case class JobListFor(users: Seq[String])
   case class JobDetail(id: Int)
   case object QueueSummary
   case object RuntimeSchedule

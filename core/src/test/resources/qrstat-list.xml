@@ -1,0 +1,12 @@
+<?xml version='1.0'?>
+<qrstat xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qrstat/qrstat.xsd?revision=1.2">
+   <ar_summary>
+      <id>55</id>
+      <name/>
+      <owner>user</owner>
+      <state>r</state>
+      <start_time>2012-12-17T15:03:39</start_time>
+      <end_time>2022-09-16T16:03:39</end_time>
+      <duration>85440:00:00</duration>
+   </ar_summary>
+</qrstat>

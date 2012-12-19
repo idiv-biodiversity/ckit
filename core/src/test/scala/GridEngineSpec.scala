@@ -137,9 +137,21 @@ class GridEngineSpec extends Specification with GridEngine { def is =
     _.name
   } must contain ("batch", "highmem", "mixed", "parallel").only.inOrder
 
-  def invalidSchedule = schedule("", "").isFailure must beTrue
-  def emptySchedule = schedule("/qhost-jobs-empty.xml", "/qstat-job-list-empty.xml").get must have size 0
-  def nonEmptySchedule = schedule("/qhost-jobs.xml", "/qstat-resource-job-list.xml").get must have size 1
+  def invalidSchedule = schedule("", "", "").isFailure must beTrue
+  def emptySchedule = {
+    val sched = schedule("/qhost-jobs-empty.xml", "/qstat-job-list-empty.xml", "/qrstat-list-empty.xml").get
+
+    (sched.cluster.nodes must have size 0) and
+    (sched.jobs          must have size 0) and
+    (sched.reservations  must have size 0)
+  }
+  def nonEmptySchedule = {
+    val sched = schedule("/qhost-jobs.xml", "/qstat-resource-job-list.xml", "/qrstat-list.xml").get
+
+    (sched.cluster.nodes must have size 1) and
+    (sched.jobs          must have size 1) and
+    (sched.reservations  must have size 1)
+  }
 
   import Job._
 
@@ -157,6 +169,8 @@ class GridEngineSpec extends Specification with GridEngine { def is =
   def list(res: String) = jobList(XML(res))
   def detail(res: String) = jobDetail(XML(res))
   def summary(res: String) = queueSummary(XML(res))
-  def schedule(r1: String, r2: String) = runtimeSchedule(XML(r1), XML(r2))
+  def schedule(r1: String, r2: String, r3: String) = runtimeSchedule(XML(r1), XML(r2), XML(r3))
+
+  override def xmlReservation(id: Int) = XML(s"/qrstat-detail-$id.xml")
 
 }

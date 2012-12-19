@@ -33,12 +33,14 @@ object GridEngine extends GridEngine
 
 trait GridEngine {
 
-  lazy val deleted   = State("deleted", Deleted)
-  lazy val error     = State("error", Error)
-  lazy val pending   = State("pending", Pending)
-  lazy val running   = State("running", Running)
-  lazy val suspended = State("suspended", Suspended)
-  lazy val unknown   = State("unknown", Unknown)
+  object state {
+    lazy val deleted   = State("deleted", Deleted)
+    lazy val error     = State("error", Error)
+    lazy val pending   = State("pending", Pending)
+    lazy val running   = State("running", Running)
+    lazy val suspended = State("suspended", Suspended)
+    lazy val unknown   = State("unknown", Unknown)
+  }
 
   def jobDetail(id: Int): Try[JobDetail] = jobDetail(xmlJobInfo(id))
 
@@ -47,8 +49,8 @@ trait GridEngine {
   def jobList(user: Option[String] = None, resources: Boolean = false): Try[Seq[Job]] =
     jobList(xmlJobList(user, resources))
 
-  def runtimeSchedule: Try[Seq[ScheduleTask]] =
-    runtimeSchedule(xmlNodeJobList, xmlJobList(None, true))
+  def runtimeSchedule: Try[RuntimeSchedule] =
+    runtimeSchedule(xmlNodeJobList, xmlJobList(None, true), xmlReservations)
 
   def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
 
@@ -116,12 +118,12 @@ trait GridEngine {
     }
   }
 
-  private[ckit] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem): Try[Seq[ScheduleTask]] = Try {
+  private[ckit] def runtimeSchedule(qhost: ⇒ Elem, qstat: ⇒ Elem, qrstat: ⇒ Elem): Try[RuntimeSchedule] = Try {
     val qhostxml: Elem = qhost
 
     val jobs = jobList(qstat).get.map(j ⇒ j.id → j).toMap
 
-    for {
+    val running = for {
       host     ← qhostxml \ "host"
       hostname = (host \ "@name").text if hostname != "global"
       qhostjob ← host \ "job"
@@ -132,7 +134,44 @@ trait GridEngine {
       runtime  ← qstatjob.requests.get("h_rt") flatMap { value ⇒
         Try(value.toLong * 1000).toOption
       }
-    } yield ScheduleTask(hostname, id, jobname, start, runtime)
+    } yield ScheduleTask(Map(hostname → 1), id, jobname, start, runtime)
+
+    val reserved = reservations(qrstat)
+
+    RuntimeSchedule(cluster(qhostxml), running, reserved)
+  }
+
+  private[ckit] def cluster(qhost: Elem): Cluster = {
+    val nodes = for {
+      host  ← qhost \\ "host"
+      name  = (host \ "@name").text if name != "global"
+      slots = (host \ "hostvalue").collectFirst {
+        case xml if (xml \ "@name").text == "num_proc" ⇒ xml.text.toInt
+      }.get
+    } yield ComputeNode(name, slots)
+
+    Cluster(nodes.toSet)
+  }
+
+  private[ckit] def reservations(qrstat: Elem): Seq[ScheduleTask] = for {
+    ar ← qrstat \\ "ar_summary"
+    id = (ar \ "id").text.toInt
+  } yield reservation(xmlReservation(id))
+
+  private[ckit] def reservation(qrstat: Elem): ScheduleTask = {
+    val xml = qrstat \ "ar_summary"
+
+    ScheduleTask (
+      nodes   = (xml \ "granted_slots_list" \ "granted_slots").map( xml ⇒
+        (xml \ "@queue_instance").text → (xml \ "@slots").text.toInt
+      ).toMap,
+      id      = (xml \ "id").text.toInt,
+      name    = (xml \ "name").text,
+      start   = (xml \ "start_time").text,
+      runtime = (xml \ "duration").text.split(":").reverse.toSeq.zipWithIndex.map {
+        case(t,i) ⇒ (math.pow(60,i) * t.toInt).round
+      }.sum
+    )
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -142,12 +181,12 @@ trait GridEngine {
   private[GridEngine] val QueueInstance = """(.+)@(.+)""".r
 
   private[GridEngine] def state(s: String): State = s match {
-    case DeletedRE()   ⇒ deleted
-    case ErrorRE()     ⇒ error
-    case PendingRE()   ⇒ pending
-    case RunningRE()   ⇒ running
-    case SuspendedRE() ⇒ suspended
-    case _             ⇒ unknown
+    case DeletedRE()   ⇒ state.deleted
+    case ErrorRE()     ⇒ state.error
+    case PendingRE()   ⇒ state.pending
+    case RunningRE()   ⇒ state.running
+    case SuspendedRE() ⇒ state.suspended
+    case _             ⇒ state.unknown
   }
 
   private[GridEngine] def job(xml: Node): Job = {
@@ -190,5 +229,9 @@ trait GridEngine {
   private[GridEngine] def xmlNodeJobList: Elem = XML.loadString("qhost -xml -j".!!)
 
   private[GridEngine] def xmlQueueSummary: Elem = XML.loadString("qstat -xml -g c".!!)
+
+  private[GridEngine] def xmlReservations: Elem = XML.loadString("qrstat -xml -u *".!!)
+
+  private[ckit] def xmlReservation(id: Int): Elem = XML.loadString(s"qrstat -xml -ar $id".!!)
 
 }

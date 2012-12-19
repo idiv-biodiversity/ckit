@@ -25,6 +25,14 @@
 
 package ckit
 
+object State {
+  implicit val ordering: Ordering[State] = new Ordering[State] {
+    override def compare(a: State, b: State): Int = {
+      a.category.id.compareTo(b.category.id)
+    }
+  }
+}
+
 case class State(name: String, category: StateCategory)
 
 case class Job (
@@ -55,8 +63,12 @@ case class JobDetail (
     globalMessages: Seq[String]
   )
 
+case class ComputeNode(name: String, slots: Int)
+
+case class Cluster(nodes: Set[ComputeNode])
+
 case class Task(id: Int, usage: Map[String,String])
 
-case class ScheduleTask(node: String, id: Int, name: String, start: String, runtime: Long)
+case class ScheduleTask(nodes: Map[String,Int], id: Int, name: String, start: String, runtime: Long)
 
-case class RuntimeSchedule(jobs: Seq[ScheduleTask])
+case class RuntimeSchedule(cluster: Cluster, jobs: Seq[ScheduleTask], reservations: Seq[ScheduleTask])

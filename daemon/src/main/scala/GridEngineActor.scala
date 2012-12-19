@@ -53,7 +53,7 @@ class GridEngineActor extends Actor with GridEngine {
     }
 
     case msg @ Protocol.RuntimeSchedule ⇒ runtimeSchedule match {
-      case     Success(schedule) ⇒ sender ! RuntimeSchedule(schedule)
+      case     Success(schedule) ⇒ sender ! schedule
       case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
     }
   }

@@ -1,0 +1,29 @@
+<?xml version='1.0'?>
+<qrstat xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qrstat/qrstat.xsd?revision=1.2">
+   <ar_summary>
+      <id>55</id>
+      <name/>
+      <owner>user</owner>
+      <state>r</state>
+      <start_time>2012-12-17T15:03:39</start_time>
+      <end_time>2022-09-16T16:03:39</end_time>
+      <duration>85440:00:00</duration>
+      <submission_time>2012-12-17T15:03:39</submission_time>
+      <group>sge</group>
+      <account>sge</account>
+      <resource_list>
+         <resource name="h_rt" type="345600"/>
+      </resource_list>
+      <granted_slots_list>
+         <granted_slots  queue_instance="test@node083" slots="12"/>
+         <granted_slots  queue_instance="test@node084" slots="12"/>
+      </granted_slots_list>
+      <granted_parallel_environment>
+         <parallel_environment>openmpi-orte</parallel_environment>
+         <slots>24</slots>
+      </granted_parallel_environment>
+      <acl_list>
+         <acl  user="user"/>
+      </acl_list>
+   </ar_summary>
+</qrstat>
