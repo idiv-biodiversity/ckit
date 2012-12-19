@@ -169,7 +169,7 @@ trait GridEngine {
       name    = (xml \ "name").text,
       start   = (xml \ "start_time").text,
       runtime = (xml \ "duration").text.split(":").reverse.toSeq.zipWithIndex.map {
-        case(t,i) ⇒ (math.pow(60,i) * t.toInt).round
+        case(t,i) ⇒ (math.pow(60,i) * t.toInt).round * 1000
       }.sum
     )
   }
