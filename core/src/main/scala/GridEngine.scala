@@ -44,13 +44,13 @@ trait GridEngine {
 
   def jobDetail(id: Int): Try[JobDetail] = jobDetail(xmlJobInfo(id))
 
-  def jobList: Try[Seq[Job]] = jobList()
+  def jobList: Try[Seq[Job]] = jobList(Nil)
 
-  def jobList(user: Option[String] = None, resources: Boolean = false): Try[Seq[Job]] =
-    jobList(xmlJobList(user, resources))
+  def jobList(users: Seq[String], resources: Boolean = false): Try[Seq[Job]] =
+    jobList(xmlJobList(users, resources))
 
   def runtimeSchedule: Try[RuntimeSchedule] =
-    runtimeSchedule(xmlNodeJobList, xmlJobList(None, true), xmlReservations)
+    runtimeSchedule(xmlNodeJobList, xmlJobList(Nil, true), xmlReservations)
 
   def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
 
@@ -163,7 +163,7 @@ trait GridEngine {
 
     ScheduleTask (
       nodes   = (xml \ "granted_slots_list" \ "granted_slots").map( xml ⇒
-        (xml \ "@queue_instance").text → (xml \ "@slots").text.toInt
+        (xml \ "@queue_instance").text.split("@")(1) → (xml \ "@slots").text.toInt
       ).toMap,
       id      = (xml \ "id").text.toInt,
       name    = (xml \ "name").text,
@@ -221,8 +221,9 @@ trait GridEngine {
 
   private[GridEngine] def xmlJobInfo(id: Int): Elem = XML.loadString(s"qstat -xml -j $id".!!)
 
-  private[GridEngine] def xmlJobList(user: Option[String], resources: Boolean): Elem = {
-    val command = "qstat -xml" + { if (resources) " -r" else " " } + { " -u " + user.getOrElse("*") }
+  private[GridEngine] def xmlJobList(users: Seq[String], resources: Boolean): Elem = {
+    val us = if (users.isEmpty) "*" else users.mkString(",")
+    val command = "qstat -xml" + { if (resources) " -r" else " " } + { " -u " + us }
     XML.loadString(command.!!)
   }
 

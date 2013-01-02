@@ -42,6 +42,11 @@ class GridEngineActor extends Actor with GridEngine {
       case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
     }
 
+    case msg @ Protocol.JobListFor(users) ⇒ jobList(users) match {
+      case     Success(jobs)   ⇒ sender ! JobList(jobs)
+      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    }
+
     case msg @ Protocol.JobDetail(id) ⇒ jobDetail(id) match {
       case     Success(detail) ⇒ sender ! detail
       case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
