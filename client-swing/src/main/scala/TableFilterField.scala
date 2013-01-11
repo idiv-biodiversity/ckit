@@ -28,75 +28,42 @@ package client
 package swing
 
 import scala.swing._
-import scala.swing.event._
-import scala.util._
+import scala.swing.Swing._
 
-import akka.actor.{ ActorSystem, Props }
+import javax.swing._
+import javax.swing.event._
+import javax.swing.table._
 
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
+/**
+ * This class wraps around a changeable {@link javax.swing.table.TableRowSorter}
+ * and uses its input text as a regular expression to apply updated
+ * {@link javax.swing.RowFilter}s to the sorters
+ * {@link javax.swing.table.TableModel}.
+ * <p>
+ * Changes on the underlying {@link javax.swing.text.Document} will immediately
+ * update the filter.
+ * <p>
+ * WARNING: The filter will not be updated when the sorters model changes!
+ */
+class TableFilterField(jobTable: JobListPane) extends TextField with DocumentListener {
 
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
+  peer.getDocument.addDocumentListener(this)
 
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
+  override def changedUpdate(e: DocumentEvent) = updateFilter()
+  override def  insertUpdate(e: DocumentEvent) = updateFilter()
+  override def  removeUpdate(e: DocumentEvent) = updateFilter()
 
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
-  }
-
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
+  /**
+   * Will apply a new regular expression {@link javax.swing.RowFilter} to the
+   * underlying {@link javax.swing.table.TableRowSorter}, if the expression in
+   * this {@link javax.swing.JTextField} parses.
+   */
+  def updateFilter(): Unit = try {
+    jobTable.table.peer.getRowSorter match {
+      case sorter: DefaultRowSorter[_,_] ⇒ sorter.setRowFilter(RowFilter.regexFilter(text))
+      case _ ⇒
     }
-  }
-
-  lazy val tabbed = new TabbedPane
-
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
+  } catch {
+    case e: Exception ⇒
   }
 }

@@ -26,77 +26,28 @@
 package ckit
 package client
 package swing
+package action
 
 import scala.swing._
-import scala.swing.event._
-import scala.util._
+import scala.util.Properties
 
-import akka.actor.{ ActorSystem, Props }
+object JobList extends Action("Job List") {
+  override def apply {
+    SwingClient.proxy ! Protocol.JobList
+  }
+}
 
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
+object JobListFor extends Action("Job List ...") {
+  override def apply: Unit = for {
+    user ← Dialog.showInput[String](message = "Type in a username!", initial = Properties.userName) map { _.trim }
+      if user.nonEmpty
+  } JobListFor(user)
 
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
-
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
-
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
+  def apply(user: String) {
+    JobListFor(Seq(user))
   }
 
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
-    }
-  }
-
-  lazy val tabbed = new TabbedPane
-
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
+  def apply(users: Seq[String]) {
+    SwingClient.proxy ! Protocol.JobListFor(users)
   }
 }

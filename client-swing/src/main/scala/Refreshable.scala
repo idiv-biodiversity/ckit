@@ -27,76 +27,28 @@ package ckit
 package client
 package swing
 
+import java.beans.PropertyChangeSupport
+
 import scala.swing._
-import scala.swing.event._
-import scala.util._
 
-import akka.actor.{ ActorSystem, Props }
+object Refreshable {
+  val propertyName = "refresh"
+}
 
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
+/** Mixin for [[Component]]s for refreshing. */
+trait Refreshable {
+  self: Component ⇒
 
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
+  private[this] var _refreshEnabled = true
+  val refreshProperty = new PropertyChangeSupport(this)
 
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
-
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
+  def refreshEnabled = _refreshEnabled
+  def refreshEnabled_=(flag: Boolean) {
+    val old = _refreshEnabled
+    _refreshEnabled = flag
+    refreshProperty.firePropertyChange(Refreshable.propertyName, old, flag)
   }
 
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
-    }
-  }
-
-  lazy val tabbed = new TabbedPane
-
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
-  }
+  /** Refreshes the content. */
+  def refresh()
 }

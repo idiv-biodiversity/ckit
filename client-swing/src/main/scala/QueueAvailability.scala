@@ -28,75 +28,34 @@ package client
 package swing
 
 import scala.swing._
-import scala.swing.event._
-import scala.util._
+import scala.swing.Swing._
 
-import akka.actor.{ ActorSystem, Props }
+import java.awt.Color
 
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
+/** Small panel for toolbars to show availability of queues. */
+class QueueAvailability extends BoxPanel(Orientation.Horizontal) {
+  peer.setDoubleBuffered(true)
+  opaque = false
 
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
+  def refresh(summaries: Seq[QueueSummary]) {
+    contents.clear()
+    for (summary ← summaries) {
+      // TODO use buttons for submission
+      val label = new Label(summary.name)
+      label.opaque = true
+      label.tooltip = if (summary.available > 0) {
+        "accepts jobs"
+      } else {
+        "is overloaded"
+      }
+      label.background = if (summary.available > 0) {
+        Color.GREEN
+      } else {
+        Color.RED
+      }
 
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
-
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
-  }
-
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
+      contents += label
+      contents += RigidBox((5, 0))
     }
-  }
-
-  lazy val tabbed = new TabbedPane
-
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
   }
 }

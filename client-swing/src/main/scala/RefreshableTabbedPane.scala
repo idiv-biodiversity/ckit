@@ -28,75 +28,28 @@ package client
 package swing
 
 import scala.swing._
-import scala.swing.event._
-import scala.util._
 
-import akka.actor.{ ActorSystem, Props }
+/** Mixin for [[TabbedPane]]s to refresh [[Refreshable]]s. */
+trait RefreshableTabbedPane {
+  self: TabbedPane ⇒
 
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
+  /** Refreshes the [[Refreshable]] if contained by this. */
+  def refresh(refreshable: Component with Refreshable) {
+    val index = peer.indexOfComponent(refreshable.peer)
 
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
-
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
-
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
+    // -1 indicates the component is not in this container
+    if (index != -1) refreshable.refresh()
   }
 
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
-    }
+  /** Refreshes the component at given index. */
+  def refresh(index: Int) = pages(index).content match {
+    case r: Refreshable ⇒ r.refresh()
+    case _ ⇒
   }
 
-  lazy val tabbed = new TabbedPane
-
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
+  /** Refreshes all tab components. */
+  def refreshAll() {
+    for (index ← 0 until pages.length)
+      refresh(index)
   }
 }

@@ -26,77 +26,28 @@
 package ckit
 package client
 package swing
+package action
 
 import scala.swing._
-import scala.swing.event._
-import scala.util._
 
-import akka.actor.{ ActorSystem, Props }
-
-object SwingClient extends SwingApplication {
-  val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
-  val proxy = system.actorOf(Props[Proxy], name = "proxy")
-
-  lazy val menuBar: MenuBar = {
-    val bar = new MenuBar
-
-    val monitoring = new Menu("Monitoring")
-    monitoring.contents += new MenuItem(action.JobDetail)
-    monitoring.contents += new MenuItem(action.JobList)
-    monitoring.contents += new MenuItem(action.JobListFor)
-    monitoring.contents += new MenuItem(action.QueueSummary)
-    monitoring.contents += new MenuItem(action.RuntimeSchedule)
-
-    val main = new Menu("Main")
-    main.contents += monitoring
-    main.contents += new Separator
-    main.contents += new MenuItem(action.Quit)
-
-    val help = new Menu("Help")
-    help.contents += new MenuItem(action.Help)
-    help.contents += new MenuItem(action.Mail)
-    help.contents += new Separator
-    help.contents += new MenuItem(action.About)
-
-    bar.contents += main
-    bar.contents += help
-    bar
-  }
-
-  lazy val top = new MainFrame {
-    override def closeOperation() {
-      SwingClient.quit()
+/** Shows a dialog with all registered keyboard shortcuts. */
+object ShowShortcuts extends Action("show") {
+  override def apply {
+    // preparing the dialog
+    val dialog = new Dialog(SwingClient.top) {
+      override def closeOperation() = dispose()
     }
-  }
+    dialog.title = "Keyboard Shortcuts"
+    dialog.preferredSize = new Dimension(640, 480)
 
-  lazy val tabbed = new TabbedPane
+    // preparing the display
+    val display = new TextArea()
+    display.editable = false
+    dialog.contents = new ScrollPane(display)
 
-  def startup(args: Array[String]) {
-    top.title = "ClusterKit"
-    top.menuBar = menuBar
-
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
-
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
-
-    top.pack()
-    top.visible = true
-  }
-
-  override def quit() {
-    system.shutdown()
-    sys.exit(0)
+    // finishing and showing the dialog
+    dialog.pack()
+    dialog.setLocationRelativeTo(SwingClient.top)
+    dialog.visible = true
   }
 }
