@@ -42,7 +42,7 @@ object ClusterKitBuild extends Build {
     base      = file ("core"),
     settings  = baseSettings ++ Seq (
       name := "ckit-core",
-      libraryDependencies ++= Seq ( actor, remote, specs )
+      libraryDependencies ++= Seq ( actor, remote, specs, time )
     )
   )
 
