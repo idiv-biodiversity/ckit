@@ -31,11 +31,11 @@ import scala.swing._
 import scala.swing.event._
 import scala.util._
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor._
 
 object SwingClient extends SwingApplication {
   val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka.tcp://ckit@141.65.122.14:2552/user/grid-engine-actor")
+  var remote: ActorSelection = _
   val proxy = system.actorOf(Props[Proxy], name = "proxy")
 
   lazy val menuBar: MenuBar = {
@@ -70,26 +70,42 @@ object SwingClient extends SwingApplication {
     }
   }
 
-  lazy val tabbed = new TabbedPane
+  def Connector = {
+    val field = new TextField("host.cluster.example.org")
+    field.listenTo(field.keys)
+    field.reactions += {
+      case event @ KeyPressed(_, key, _, _) if key == Key.Enter ⇒
+        val host = field.text
+
+        Try(java.net.InetAddress.getByName(host).getHostAddress) match {
+          case Success(address) ⇒
+            remote = system.actorSelection(s"""akka.tcp://ckit@$address:2552/user/grid-engine-actor""")
+            action.JobList()
+
+          case Failure(reason) ⇒
+            Console.err.println(reason)
+        }
+    }
+
+    val panel = new FlowPanel
+    panel.contents += field
+    panel
+  }
+
+  lazy val view = new BorderPanel {
+    def contents_=(c: Component): Unit = {
+      layout(c) = BorderPanel.Position.Center
+    }
+  }
 
   def startup(args: Array[String]) {
     top.title = "ClusterKit"
     top.menuBar = menuBar
 
-    val panel = new BorderPanel
-    panel.layout(tabbed) = BorderPanel.Position.Center
-    panel.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
+    view.contents = Connector
+    view.peer.add(StatusBar, java.awt.BorderLayout.SOUTH)
 
-    top.contents = panel
-
-    tabbed.listenTo(tabbed.keys)
-    tabbed.reactions += {
-      case event @ KeyPressed(_, key, modifiers, _)
-        if modifiers == Key.Modifier.Control && key == Key.W ⇒
-          tabbed.pages.remove(tabbed.selection.index)
-    }
-
-    tabbed.pages += new TabbedPane.Page("Welcome", new Label("... this is ClusterKit"))
+    top.contents = view
 
     top.pack()
     top.visible = true

@@ -47,11 +47,14 @@ class Proxy extends Actor {
     case ckit.JobList(jobs: Seq[Job]) ⇒ Swing onEDT {
       val users = jobs.map(_.owner).distinct.mkString(", ")
       val panel = new JobListPane(Some(users), jobs)
-      SwingClient.tabbed.pages += new TabbedPane.Page(users, panel)
+      SwingClient.view.contents = panel
+      panel.table.requestFocus()
+      SwingClient.view.revalidate
     }
 
     case ckit.QueueSummaryList(qs) ⇒ Swing onEDT {
-      SwingClient.tabbed.pages += new TabbedPane.Page("Queue Summary", new EditorPane("text/plain", qs.mkString("\n")))
+      SwingClient.view.contents = new EditorPane("text/plain", qs.mkString("\n"))
+      SwingClient.view.revalidate
     }
 
     case ckit.RuntimeSchedule(cluster, running, reserved) ⇒
@@ -114,7 +117,8 @@ class Proxy extends Actor {
         val panel = new BorderPanel
         panel.peer.add(new ChartPanel(chart))
 
-        SwingClient.tabbed.pages += new TabbedPane.Page("Runtime Schedule", panel)
+        SwingClient.view.contents = panel
+        SwingClient.view.revalidate
       }
 
     case Failure(reason) ⇒ Swing onEDT {

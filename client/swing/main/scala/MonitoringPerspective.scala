@@ -146,7 +146,7 @@ object MonitoringPerspective extends BorderPanel
       case _ ⇒ {
         // there are tabs --> update components
         val jobTable = tabbedTables.selection.page.content.asInstanceOf[JobListPane]
-        val filter = jobTable.filterField
+        val filter = jobTable.filter
 
         // update filter
         toolBar.add(filterLabel.peer)
