@@ -35,7 +35,7 @@ import akka.actor.{ ActorSystem, Props }
 
 object SwingClient extends SwingApplication {
   val system = ActorSystem("ckit")
-  val remote = system.actorFor("akka://ckit@141.65.122.14:2552/user/grid-engine-actor")
+  val remote = system.actorFor("akka.tcp://ckit@141.65.122.14:2552/user/grid-engine-actor")
   val proxy = system.actorOf(Props[Proxy], name = "proxy")
 
   lazy val menuBar: MenuBar = {
