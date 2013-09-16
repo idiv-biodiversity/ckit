@@ -28,7 +28,7 @@ package client
 package swing
 
 import scala.swing._
-import scala.swing.event.KeyPressed
+import scala.swing.event._
 
 import scala.collection.JavaConversions._
 
@@ -38,7 +38,6 @@ import java.awt.event.{ MouseEvent, MouseAdapter }
 
 import javax.swing._
 import javax.swing.RowSorter.SortKey
-import javax.swing.event.{ DocumentEvent, DocumentListener }
 import javax.swing.event.ListSelectionListener
 import javax.swing.plaf.basic.BasicTableHeaderUI
 import javax.swing.table._
@@ -65,20 +64,13 @@ object JobListPane {
 }
 
 class JobListPane(val username: Option[String], private var jobs: Seq[Job]) extends ScrollPane with PopupMenuTriggerable with Refreshable {
+  val filter = new TextField
 
-  object filter extends TextField with DocumentListener {
-    peer.getDocument.addDocumentListener(this)
-
-    override def changedUpdate(e: DocumentEvent) = apply
-    override def  insertUpdate(e: DocumentEvent) = apply
-    override def  removeUpdate(e: DocumentEvent) = apply
-
-    def apply = ignoring(classOf[java.util.regex.PatternSyntaxException]) {
-      table.peer.getRowSorter match {
-        case sorter: DefaultRowSorter[_,_] ⇒
-          sorter.setRowFilter(RowFilter.regexFilter(text))
-        case _ ⇒
-      }
+  def applyFilter() = ignoring(classOf[java.util.regex.PatternSyntaxException]) {
+    table.peer.getRowSorter match {
+      case sorter: DefaultRowSorter[_,_] ⇒
+        sorter.setRowFilter(RowFilter.regexFilter(filter.text))
+      case _ ⇒
     }
   }
 
@@ -110,7 +102,7 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
   // bindings
   // -----------------------------------------------------------------------
 
-  listenTo(filter.keys, table.keys)
+  listenTo(filter, filter.keys, table.keys)
   reactions += {
     case event @ KeyPressed(`table`, Key.Slash, _, _) ⇒
       StatusBar.add(filter.peer)
@@ -120,6 +112,9 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
     case event @ KeyPressed(`filter`, key, _, _) if key == Key.Enter || key == Key.Escape ⇒
       StatusBar.remove(filter.peer)
       StatusBar.revalidate
+
+    case event @ ValueChanged(`filter`) ⇒
+      applyFilter
   }
 
   private val im = table.peer.getInputMap(action.binding.ancestorOfFocusedComponent)
@@ -166,7 +161,7 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
     table.peer.setRowSorter(newSorter)
     newSorter.setSortKeys(oldSortKeys)
 
-    filter.apply
+    applyFilter
 
     val rowCount = table.model.getRowCount
     oldSelection.foreach { pair ⇒
