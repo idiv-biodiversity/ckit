@@ -38,7 +38,6 @@ import java.awt.event.{ MouseEvent, MouseAdapter }
 
 import javax.swing._
 import javax.swing.RowSorter.SortKey
-import javax.swing.event.ListSelectionListener
 import javax.swing.plaf.basic.BasicTableHeaderUI
 import javax.swing.table._
 
@@ -64,16 +63,6 @@ object JobListPane {
 }
 
 class JobListPane(val username: Option[String], private var jobs: Seq[Job]) extends ScrollPane with PopupMenuTriggerable with Refreshable {
-  val filter = new TextField
-
-  def applyFilter() = ignoring(classOf[java.util.regex.PatternSyntaxException]) {
-    table.peer.getRowSorter match {
-      case sorter: DefaultRowSorter[_,_] ⇒
-        sorter.setRowFilter(RowFilter.regexFilter(filter.text))
-      case _ ⇒
-    }
-  }
-
   val table = new Table()
   table.model = new JobListPane.TModel(jobs)
   table.peer.addPropertyChangeListener(propertyChangeListener)
@@ -98,23 +87,42 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
     }
   }
 
-  // -----------------------------------------------------------------------
-  // bindings
-  // -----------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
+  // filtering
+  // -----------------------------------------------------------------------------------------------
 
-  listenTo(filter, filter.keys, table.keys)
+  val filter = new TextField
+
+  def applyFilter() = ignoring(classOf[java.util.regex.PatternSyntaxException]) {
+    table.peer.getRowSorter match {
+      case sorter: DefaultRowSorter[_,_] ⇒
+        sorter.setRowFilter(RowFilter.regexFilter(filter.text))
+      case _ ⇒
+    }
+  }
+
+  listenTo(filter, filter.keys)
   reactions += {
-    case event @ KeyPressed(`table`, Key.Slash, _, _) ⇒
-      StatusBar.add(filter.peer)
-      StatusBar.revalidate
-      filter.requestFocus()
-
     case event @ KeyPressed(`filter`, key, _, _) if key == Key.Enter || key == Key.Escape ⇒
       StatusBar.remove(filter.peer)
       StatusBar.revalidate
 
     case event @ ValueChanged(`filter`) ⇒
       applyFilter
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  // bindings
+  // -----------------------------------------------------------------------------------------------
+
+  listenTo(table.keys)
+  reactions += {
+    case event @ KeyPressed(`table`, key, mod, _)
+        if key == Key.Slash || mod == Modifier.Control && key == Key.S ⇒
+      filter.selectAll()
+      StatusBar.add(filter.peer)
+      StatusBar.revalidate
+      filter.requestFocus()
   }
 
   private val im = table.peer.getInputMap(action.binding.ancestorOfFocusedComponent)
