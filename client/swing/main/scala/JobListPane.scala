@@ -127,9 +127,15 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
 
   private val im = table.peer.getInputMap(action.binding.ancestorOfFocusedComponent)
 
-  // let (shift) tab do what down (up) does
-  im.put(keyStroke(Key.Tab), im.get(keyStroke(Key.Down)))
+  // let C-n (C-p) (shift) tab do what down (up) does
+  im.put(keyStroke(Key.Tab),                 im.get(keyStroke(Key.Down)))
   im.put(keyStroke(Key.Tab, Modifier.Shift), im.get(keyStroke(Key.Up)))
+  im.put(keyStroke(Key.N, Modifier.Control), im.get(keyStroke(Key.Down)))
+  im.put(keyStroke(Key.P, Modifier.Control), im.get(keyStroke(Key.Up)))
+
+  // let C-v and M-v do what page up page down do
+  im.put(keyStroke(Key.V, Modifier.Control), im.get(keyStroke(Key.PageDown)))
+  im.put(keyStroke(Key.V, Modifier.Alt),     im.get(keyStroke(Key.PageUp)))
 
   // let home and end do what ctrl home and end does
   im.put(keyStroke(Key.Home), im.get(keyStroke(Key.Home, Modifier.Control)))
