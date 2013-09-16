@@ -50,9 +50,12 @@ object StateCategoryRenderer extends DefaultTableCellRenderer {
 
     setFont(table.getFont)
 
-    setValue(table.getModel.getValueAt(
-      table.convertRowIndexToModel(row),
-      table.convertColumnIndexToModel(column)))
+    val value = table.getModel.getValueAt(table.convertRowIndexToModel(row),table.convertColumnIndexToModel(column)) match {
+      case state: State ⇒ state.category
+      case x ⇒ x
+    }
+
+    setValue(value)
 
     this
   }
