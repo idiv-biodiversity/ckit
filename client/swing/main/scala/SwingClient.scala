@@ -72,6 +72,7 @@ object SwingClient extends SwingApplication {
 
   def Connector = {
     val field = new TextField("host.cluster.example.org")
+    field.selectAll()
     field.listenTo(field.keys)
     field.reactions += {
       case event @ KeyPressed(_, key, _, _) if key == Key.Enter ⇒
@@ -93,8 +94,19 @@ object SwingClient extends SwingApplication {
   }
 
   lazy val view = new BorderPanel {
-    def contents_=(c: Component): Unit = {
+    private var current: Component = _
+    private var previous: Component = _
+
+    def contents_=(c: Component): Unit = if (current != c) {
       layout(c) = BorderPanel.Position.Center
+      previous = current
+      current = c
+      current.requestFocus()
+      revalidate()
+    }
+
+    def back(): Unit = {
+      contents = previous
     }
   }
 
@@ -111,7 +123,7 @@ object SwingClient extends SwingApplication {
     top.visible = true
   }
 
-  override def quit() {
+  override def quit(): Unit = {
     system.shutdown()
     sys.exit(0)
   }

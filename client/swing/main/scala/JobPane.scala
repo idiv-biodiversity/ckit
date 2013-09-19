@@ -27,11 +27,9 @@ package ckit
 package client
 package swing
 
-import scala.collection.mutable.ArrayBuffer
-
 import scala.swing._
+import scala.swing.event._
 import scala.swing.Swing._
-import scala.swing.Orientation._
 
 class JobPane(private var data: JobDetail) extends ScrollPane with Refreshable {
 
@@ -42,6 +40,12 @@ class JobPane(private var data: JobDetail) extends ScrollPane with Refreshable {
   update(data)
 
   this.contents = pane
+
+  listenTo(keys)
+  reactions += {
+    case event @ KeyPressed(source, Key.Left, Modifier.Alt, _) if source == JobPane.this ⇒
+      SwingClient.view.back()
+  }
 
   override def refresh() = if (refreshEnabled) {
     action.JobDetail(data.id)
@@ -62,24 +66,23 @@ class JobPane(private var data: JobDetail) extends ScrollPane with Refreshable {
     general.hGap = 10
     general.vGap = 0
     general.border = TitledBorder(EtchedBorder(Lowered), "General")
-    general.contents += new Label(s"Name: $data.name")
-    general.contents += new Label(s"ID: $data.id")
-    general.contents += new Label(s"Owner: $data.owner")
-    general.contents += new Label(s"Group: $data.group")
-    general.contents += new Label(s"Project: $data.project")
-    general.contents += new Label(s"Account: $data.account")
+    general.contents += new Label(s"Name: ${data.name}")
+    general.contents += new Label(s"ID: ${data.id}")
+    general.contents += new Label(s"Owner: ${data.owner}")
+    general.contents += new Label(s"Group: ${data.group}")
+    general.contents += new Label(s"Project: ${data.project}")
+    general.contents += new Label(s"Account: ${data.account}")
 
     pane.contents += general
 
     if (data.requests.nonEmpty) {
-      val panel = new GridPanel(data.requests.size,1)
+      val panel = new GridPanel(1,data.requests.size)
       panel.hGap = 10
       panel.vGap = 0
       panel.border = TitledBorder(EtchedBorder(Lowered), "Resource Requests")
 
-      data.requests foreach { case (name,value) ⇒
-        panel.contents += new Label(s"${name}: ${value}")
-      }
+      for ((name,value) ← data.requests)
+        panel.contents += new Label(s"$name: $value")
 
       pane.contents += panel
     }
@@ -90,14 +93,15 @@ class JobPane(private var data: JobDetail) extends ScrollPane with Refreshable {
       tasks.vGap = 0
       tasks.border = TitledBorder(EtchedBorder(Lowered), "Tasks")
 
-      data.tasks foreach { task ⇒
+      for (task ← data.tasks) {
         val panel = new FlowPanel(FlowPanel.Alignment.Left)()
         panel.hGap = 10
         panel.vGap = 0
         panel.border = TitledBorder(EtchedBorder(Lowered), task.id.toString)
-        task.usage foreach { case (resource,value) ⇒
+
+        for ((resource,value) ← task.usage)
           panel.contents += new Label(s"${resource}: ${value}")
-        }
+
         tasks.contents += panel
       }
 

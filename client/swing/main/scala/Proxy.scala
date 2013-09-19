@@ -28,33 +28,35 @@ package client
 package swing
 
 import akka.actor.Actor
+
 import scala.swing._
 import scala.util._
 
 class Proxy extends Actor {
-  val formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+  def receive = sendToRemoteHandler orElse receiveFromRemoteHandler
 
-  def receive = {
+  def sendToRemoteHandler: Receive = {
+    case msg @ Protocol.JobDetail(_)    ⇒ SwingClient.remote ! msg
     case msg @ Protocol.JobList         ⇒ SwingClient.remote ! msg
     case msg @ Protocol.JobListFor(_)   ⇒ SwingClient.remote ! msg
-    case msg @ Protocol.JobDetail(_)    ⇒ SwingClient.remote ! msg
     case msg @ Protocol.QueueSummary    ⇒ SwingClient.remote ! msg
     case msg @ Protocol.RuntimeSchedule ⇒ SwingClient.remote ! msg
+  }
 
-    case ckit.JobDetail(name,id,owner,group,project,account,requests,tasks,messages,globalMessages) ⇒
-      // TODO
-
+  def receiveFromRemoteHandler: Receive = {
     case ckit.JobList(jobs: Seq[Job]) ⇒ Swing onEDT {
       val users = jobs.map(_.owner).distinct.mkString(", ")
       val panel = new JobListPane(Some(users), jobs)
       SwingClient.view.contents = panel
-      panel.table.requestFocus()
-      SwingClient.view.revalidate
+    }
+
+    case data: ckit.JobDetail ⇒ Swing onEDT {
+      val panel = new JobPane(data)
+      SwingClient.view.contents = panel
     }
 
     case ckit.QueueSummaryList(qs) ⇒ Swing onEDT {
       SwingClient.view.contents = new EditorPane("text/plain", qs.mkString("\n"))
-      SwingClient.view.revalidate
     }
 
     case ckit.RuntimeSchedule(cluster, running, reserved) ⇒
@@ -65,6 +67,8 @@ class Proxy extends Actor {
       import org.jfree.chart.axis.{ CategoryAxis, DateAxis }
       import org.jfree.chart.plot.{ CategoryPlot, PlotOrientation, ValueMarker }
       import org.jfree.chart.renderer.category._
+
+      val formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
       val dataset = new TaskSeriesCollection
 

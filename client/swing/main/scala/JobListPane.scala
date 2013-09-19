@@ -123,6 +123,11 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
       StatusBar.add(filter.peer)
       StatusBar.revalidate
       filter.requestFocus()
+
+    case event @ KeyPressed(`table`, key, mod, _) if mod == Modifier.Alt && key == Key.Right || key == Key.Enter ⇒
+      val ids = for (row ← table.selection.rows) yield
+        table.model.getValueAt(table.peer.convertRowIndexToModel(row), 0).asInstanceOf[Int]
+      action.JobDetail(ids.toSeq)
   }
 
   private val im = table.peer.getInputMap(action.binding.ancestorOfFocusedComponent)
@@ -141,15 +146,11 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
   im.put(keyStroke(Key.Home), im.get(keyStroke(Key.Home, Modifier.Control)))
   im.put(keyStroke(Key.End),  im.get(keyStroke(Key.End,  Modifier.Control)))
 
-  // apply a new enter action to the table
-  private val dfs = action.binding.DetailForSelection(table)
-  dfs.applyDefaultBindings()
-
   /** The popup menu. */
   private val popupMenu = new JPopupMenu("For all selected jobs ...")
   popupMenu.add(new Label(popupMenu.getLabel).peer)
   popupMenu.addSeparator()
-  popupMenu.add(new JMenuItem(dfs.peer))
+  popupMenu.add(new JMenuItem(action.binding.DetailForSelection(table).peer))
 
   this.viewportView = table
 
@@ -401,4 +402,9 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
       table.peer.getRowSorter.setSortKeys(List(new SortKey(colIndex, newSortOrder)))
     }
   }
+
+  /** Forward to table as the main content. */
+  override def requestFocus(): Unit =
+    table.requestFocus()
+
 }
