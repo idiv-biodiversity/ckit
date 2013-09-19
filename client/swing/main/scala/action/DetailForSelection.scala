@@ -27,7 +27,6 @@ package ckit
 package client
 package swing
 package action
-package binding
 
 import scala.swing.Table
 
@@ -35,7 +34,7 @@ object DetailForSelection extends Multiton[Table,DetailForSelection] {
   val create = (table: Table) ⇒ new DetailForSelection(table)
 }
 
-class DetailForSelection(val comp: Table) extends Action("get detailed information") with Binding[Table] {
+class DetailForSelection(val comp: Table) extends Action("get detailed information") {
   mnemonic = Key.D.id
 
   override def apply = {
@@ -47,10 +46,5 @@ class DetailForSelection(val comp: Table) extends Action("get detailed informati
       selection(i) = model.getValueAt(comp.peer.convertRowIndexToModel(selection(i)), 0).asInstanceOf[Int]
 
     JobDetail(selection)
-  }
-
-  override def applyDefaultBindings() {
-    comp.peer.getInputMap(ancestorOfFocusedComponent).put(keyStroke(Key.Enter), toString)
-    comp.peer.getActionMap.put(toString, this.peer)
   }
 }

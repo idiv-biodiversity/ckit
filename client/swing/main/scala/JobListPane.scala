@@ -66,7 +66,6 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
   val table = new Table()
   table.model = new JobListPane.TModel(jobs)
   table.peer.addPropertyChangeListener(propertyChangeListener)
-  table.peer.addPropertyChangeListener(MonitoringPerspective)
   table.peer.addMouseListener(this)
 
   table.selection.elementMode  = Table.ElementMode.Row
@@ -130,7 +129,7 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
       action.JobDetail(ids.toSeq)
   }
 
-  private val im = table.peer.getInputMap(action.binding.ancestorOfFocusedComponent)
+  private val im = table.peer.getInputMap(ancestorOfFocusedComponent)
 
   // let C-n (C-p) (shift) tab do what down (up) does
   im.put(keyStroke(Key.Tab),                 im.get(keyStroke(Key.Down)))
@@ -150,7 +149,7 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
   private val popupMenu = new JPopupMenu("For all selected jobs ...")
   popupMenu.add(new Label(popupMenu.getLabel).peer)
   popupMenu.addSeparator()
-  popupMenu.add(new JMenuItem(action.binding.DetailForSelection(table).peer))
+  popupMenu.add(new JMenuItem(action.DetailForSelection(table).peer))
 
   this.viewportView = table
 
@@ -251,7 +250,7 @@ class JobListPane(val username: Option[String], private var jobs: Seq[Job]) exte
 
   override def mouseClicked(me: MouseEvent) {
     if (SwingUtilities.isLeftMouseButton(me) && me.getClickCount >= 2) {
-      action.binding.DetailForSelection(table)()
+      action.DetailForSelection(table)()
     }
   }
 

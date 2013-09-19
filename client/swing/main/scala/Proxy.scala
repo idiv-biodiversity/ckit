@@ -30,6 +30,7 @@ package swing
 import akka.actor.Actor
 
 import scala.swing._
+import scala.swing.event._
 import scala.util._
 
 class Proxy extends Actor {
@@ -55,9 +56,29 @@ class Proxy extends Actor {
       SwingClient.view.contents = panel
     }
 
-    case ckit.QueueSummaryList(qs) ⇒ Swing onEDT {
-      SwingClient.view.contents = new EditorPane("text/plain", qs.mkString("\n"))
-    }
+    case ckit.QueueSummaryList(qs) ⇒
+      import scalax.chart._
+      import scalax.chart.Charting._
+
+      val data = for {
+        q ← qs
+        other = q.total - q.used - q.available
+        pie = Seq(("unavailable",other),("used",q.used),("available",q.available)) filter { _._2 != 0 }
+      } yield s"${q.name} with ${q.total} slots" → pie
+
+      val dataset = data.toCategoryDataset
+      val chart = MultiplePieChart(dataset, title = "Queue Status")
+      chart.labelGenerator = None
+
+      Swing onEDT {
+        val panel = chart.toPanel
+        panel.listenTo(panel.keys)
+        panel.reactions += {
+          case event @ KeyPressed(`panel`, Key.Left, Modifier.Alt, _) ⇒
+            SwingClient.view.back()
+        }
+        SwingClient.view.contents = panel
+      }
 
     case ckit.RuntimeSchedule(cluster, running, reserved) ⇒
       import java.util.Date

@@ -44,4 +44,7 @@ package object swing {
 
   def keyStroke(key: Key.Value, modifiers: Int = 0): KeyStroke = KeyStroke.getKeyStroke(key.id, modifiers)
 
+  val ancestorOfFocusedComponent = javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+  val inFocusedWindow            = javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW
+
 }

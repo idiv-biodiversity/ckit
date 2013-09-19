@@ -27,19 +27,13 @@ package ckit
 package client
 package swing
 
+import action._
+
 import scala.swing._
 
 import javax.swing.JToolBar
 import javax.swing.SwingConstants
-import javax.swing.SwingWorker
-import javax.swing.event.ListSelectionEvent
-import javax.swing.event.ListSelectionListener
 import javax.swing.text.PlainDocument
-
-import akka.actor._
-
-import ckit.client._
-import action._
 
 /** Status bar for displaying selections, requests, notifications. */
 object StatusBar extends JToolBar("StatusBar", SwingConstants.HORIZONTAL) {
@@ -54,16 +48,10 @@ object StatusBar extends JToolBar("StatusBar", SwingConstants.HORIZONTAL) {
   /** Label to display a short version of the latest notification. */
   private val messageLabel = new Label()
 
-  /** Label to display how much jobs of the currently displayed table are selected. */
-  private val selectedJobs = new Label("0")
-  selectedJobs.tooltip = "... job/s is/are selected in the table"
-
   // -----------------------------------------------------------------------
   // adding
   // -----------------------------------------------------------------------
 
-  add(selectedJobs.peer)
-  addSeparator
   add(messageLabel.peer)
   addSeparator
   add(Swing.HGlue.peer)
@@ -116,21 +104,6 @@ object StatusBar extends JToolBar("StatusBar", SwingConstants.HORIZONTAL) {
   // other
   // -----------------------------------------------------------------------
 
-  def createListSelectionListener(jobTable: JobListPane): ListSelectionListener = new JobTableSelectionListener(jobTable)
-
   def notifications = document
 
-  /** Updates the label displaying the amount of selected jobs in the currently displayed table. */
-  def setSelectedJobs(s: Int) = selectedJobs.text = if (s > 0) {
-    s.toString
-  } else {
-    "0"
-  }
-
-  class JobTableSelectionListener(jobTable: JobListPane) extends ListSelectionListener {
-    // update if this is selected component
-    override def valueChanged(e: ListSelectionEvent): Unit =
-      if (MonitoringPerspective.isSelected(jobTable))
-        setSelectedJobs(jobTable.selectedRowCount)
-  }
 }
