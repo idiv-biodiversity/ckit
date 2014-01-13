@@ -54,6 +54,21 @@ trait GridEngine {
 
   def queueSummary: Try[Seq[QueueSummary]] = queueSummary(xmlQueueSummary)
 
+  def nodeInfo(node: String): Try[NodeInfo] = for {
+    rs <- runtimeSchedule
+
+    slots = rs.cluster.nodes collectFirst {
+      case ComputeNode(name, slots) if name == node =>
+        slots
+    } getOrElse 0
+
+    jobs = rs.jobs collect {
+      case ScheduleTask(nodes, id, _, start, runtime) if nodes contains node =>
+        val slots = nodes(node)
+        NodeInfo.Job(id, slots, start, runtime)
+    }
+  } yield NodeInfo(node, slots, jobs.toList)
+
   // -----------------------------------------------------------------------------------------------
   // testing interface
   // -----------------------------------------------------------------------------------------------

@@ -72,3 +72,10 @@ case class Task(id: Int, usage: Map[String,String])
 case class ScheduleTask(nodes: Map[String,Int], id: Int, name: String, start: String, runtime: Long)
 
 case class RuntimeSchedule(cluster: Cluster, jobs: Seq[ScheduleTask], reservations: Seq[ScheduleTask])
+
+
+object NodeInfo {
+  case class Job(id: Int, slots: Int, start: String, runtime: Long)
+}
+
+case class NodeInfo(name: String, slots: Int, jobs: List[NodeInfo.Job])

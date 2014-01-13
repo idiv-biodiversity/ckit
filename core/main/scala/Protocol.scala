@@ -31,4 +31,5 @@ object Protocol {
   case class JobDetail(id: Int)
   case object QueueSummary
   case object RuntimeSchedule
+  case class NodeInfo(node: String)
 }

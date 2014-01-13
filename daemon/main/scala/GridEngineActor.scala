@@ -61,6 +61,11 @@ class GridEngineActor extends Actor with GridEngine {
       case     Success(schedule) ⇒ sender ! schedule
       case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
     }
+
+    case msg @ Protocol.NodeInfo(node) ⇒ nodeInfo(node) match {
+      case     Success(nodeinfo) ⇒ sender ! nodeinfo
+      case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
+    }
   }
 
   def handleFailure(failure: Failure[_], reason: Throwable, message: Any) {
