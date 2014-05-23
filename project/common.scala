@@ -6,11 +6,7 @@ import Keys._
 package object build {
   val commonSettings = Seq (
     organization := "com.github.wookietreiber",
-    scalaVersion := "2.10.3",
-    sourceDirectory <<= baseDirectory(identity),
-    initialCommands in (Compile, consoleQuick) <<= initialCommands in Compile,
-    initialCommands in Compile in console += """
-      import scalax.hash._
-    """
+    scalaVersion := "2.11.1",
+    sourceDirectory <<= baseDirectory(identity)
   )
 }

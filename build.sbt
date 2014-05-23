@@ -13,7 +13,7 @@ lazy val root = (
 lazy val core = (
   CkitProject("ckit-core", "core")
   settings(
-    libraryDependencies ++= Seq ( actor, remote, time, specs % "test" )
+    libraryDependencies ++= Seq ( actor, remote, time, xmlMod, specs % "test" )
   )
 )
 
@@ -49,10 +49,6 @@ lazy val rest = (
   settings(
     fork in run := true,
     resolvers += "spray" at "http://repo.spray.io/",
-    libraryDependencies ++= Seq (actor, slf4j, logger,
-      "io.spray" %  "spray-can"     % "1.2.0",
-      "io.spray" %  "spray-routing" % "1.2.0",
-      "io.spray" %% "spray-json"    % "1.2.5"
-    )
+    libraryDependencies ++= Seq (actor, slf4j, logger) ++ Spray
   )
 )
