@@ -75,7 +75,7 @@ object SwingClient extends SwingApplication {
     field.selectAll()
     field.listenTo(field.keys)
     field.reactions += {
-      case event @ KeyPressed(_, key, _, _) if key == Key.Enter ⇒
+      case event @ KeyPressed(`field`, Key.Enter, _, _) ⇒
         val host = field.text
 
         Try(java.net.InetAddress.getByName(host).getHostAddress) match {

@@ -57,8 +57,7 @@ class Proxy extends Actor {
     }
 
     case ckit.QueueSummaryList(qs) ⇒
-      import scalax.chart._
-      import scalax.chart.Charting._
+      import scalax.chart.api._
 
       val data = for {
         q ← qs
@@ -71,7 +70,7 @@ class Proxy extends Actor {
       chart.labelGenerator = None
 
       Swing onEDT {
-        val panel = chart.toPanel
+        val panel = chart.toComponent
         panel.listenTo(panel.keys)
         panel.reactions += {
           case event @ KeyPressed(`panel`, Key.Left, Modifier.Alt, _) ⇒
