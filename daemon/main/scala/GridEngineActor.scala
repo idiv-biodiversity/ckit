@@ -37,34 +37,44 @@ class GridEngineActor extends Actor with GridEngine {
   val log = Logging(context.system, this)
 
   def receive = {
-    case msg @ Protocol.JobList ⇒ jobList match {
-      case     Success(jobs)   ⇒ sender ! JobList(jobs)
-      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.JobList => jobList match {
+      case     Success(jobs)   => sender ! JobList(jobs)
+      case f @ Failure(reason) => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.JobListFor(users) ⇒ jobList(users) match {
-      case     Success(jobs)   ⇒ sender ! JobList(jobs)
-      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.JobListFor(users) => jobList(users) match {
+      case     Success(jobs)   => sender ! JobList(jobs)
+      case f @ Failure(reason) => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.JobDetail(id) ⇒ jobDetail(id) match {
-      case     Success(detail) ⇒ sender ! detail
-      case f @ Failure(reason) ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.JobDetail(id) => jobDetail(id) match {
+      case     Success(detail) => sender ! detail
+      case f @ Failure(reason) => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.QueueSummary ⇒ queueSummary match {
-      case     Success(summary) ⇒ sender ! QueueSummaryList(summary)
-      case f @ Failure(reason)  ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.QueueSummary => queueSummary match {
+      case     Success(summary) => sender ! QueueSummaryList(summary)
+      case f @ Failure(reason)  => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.RuntimeSchedule ⇒ runtimeSchedule match {
-      case     Success(schedule) ⇒ sender ! schedule
-      case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.RuntimeSchedule => runtimeSchedule match {
+      case     Success(schedule) => sender ! schedule
+      case f @ Failure(reason)   => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.NodeInfo(node) ⇒ nodeInfo(node) match {
-      case     Success(nodeinfo) ⇒ sender ! nodeinfo
-      case f @ Failure(reason)   ⇒ handleFailure(f, reason, msg)
+    case msg @ Protocol.NodeInfo(node) => nodeInfo(node) match {
+      case     Success(nodeinfo) => sender ! nodeinfo
+      case f @ Failure(reason)   => handleFailure(f, reason, msg)
+    }
+
+    case msg @ Protocol.NodeInfoList => exechosts match {
+      case     Success(nodes)  => sender ! ListNodeInfo(nodes.par.flatMap(node => nodeInfo(node).toOption.toList).toList)
+      case f @ Failure(reason) => handleFailure(f, reason, msg)
+    }
+
+    case msg @ Protocol.ExecHosts => exechosts match {
+      case     Success(nodes)  => sender ! NodeList(nodes)
+      case f @ Failure(reason) => handleFailure(f, reason, msg)
     }
   }
 

@@ -34,7 +34,7 @@ class ClusterKitDaemonKernel extends Bootable {
   val system = ActorSystem("ckit")
 
   def startup = {
-    system.actorOf(Props[GridEngineActor], name = "grid-engine-actor")
+    val _ = system.actorOf(Props[GridEngineActor], name = "grid-engine-actor")
   }
 
   def shutdown = {
