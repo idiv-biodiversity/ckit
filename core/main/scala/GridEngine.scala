@@ -65,9 +65,22 @@ trait GridEngine {
     jobs = rs.jobs collect {
       case ScheduleTask(nodes, id, _, start, runtime) if nodes contains node =>
         val slots = nodes(node)
-        NodeInfo.Job(id, slots, start, runtime)
+
+        val binding = for {
+          job <- Try(xmlJobInfo(id)).toOption.toList
+          uaname <- job \\ "UA_name"
+          text = uaname.text
+          bind = Binding.SimpleCoreBinding.fromQstatXMLText(text)
+        } yield bind
+
+        val b = if (binding.nonEmpty && binding.head.isDefined) binding.head.toRight(slots) else Left(slots)
+
+        NodeInfo.Job(id, b, start, runtime)
     }
   } yield NodeInfo(node, slots, jobs.toList)
+
+  def exechosts: Try[IndexedSeq[String]] =
+    Try("qconf -sel".!!).map(_.split("\n").toIndexedSeq)
 
   // -----------------------------------------------------------------------------------------------
   // testing interface

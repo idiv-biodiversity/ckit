@@ -78,6 +78,7 @@ class GridEngineSpec extends Specification with GridEngine { def is = s2"""
 
   Job Detail Parsing
     invalid target yields failure                                               $invalidDetail
+    invalid target yields failure (broken JATASK)                               $invalidDetailBrokenJATASK
     empty target yields failure                                                 $emptyDetail
     valid input yields success (sequential job)                                 $seqDetail
       which has one task                                                        $seqDetailTasks
@@ -112,6 +113,7 @@ class GridEngineSpec extends Specification with GridEngine { def is = s2"""
   def nonEmptyList = list("/qstat-job-list.xml").get must have size 2
 
   def invalidDetail = detail("").isFailure must beTrue
+  def invalidDetailBrokenJATASK = detail("/core/test/resources/qstat-jobs-broken-JATASK.xml").isFailure must beTrue
   def emptyDetail = detail("/qstat-job-detail-empty.xml").isFailure must beTrue
   def seqDetail = detail("/qstat-job-detail-sequential.xml").isSuccess must beTrue
   def seqDetailTasks = detail("/qstat-job-detail-sequential.xml").get.tasks must have size 1

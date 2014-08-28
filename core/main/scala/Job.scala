@@ -1,28 +1,3 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *                                                                                               *
- *  Copyright  ©  2012  Christian Krause                                                         *
- *                                                                                               *
- *  Christian Krause  <christian.krause@ufz.de>                                                  *
- *                    <kizkizzbangbang@googlemail.com>                                           *
- *                                                                                               *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *                                                                                               *
- *  This file is part of 'ClusterKit'.                                                           *
- *                                                                                               *
- *  This project is free software: you can redistribute it and/or modify it under the terms      *
- *  of the GNU General Public License as published by the Free Software Foundation, either       *
- *  version 3 of the License, or any later version.                                              *
- *                                                                                               *
- *  This project is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;    *
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
- *  See the GNU General Public License for more details.                                         *
- *                                                                                               *
- *  You should have received a copy of the GNU General Public License along with this project.   *
- *  If not, see <http://www.gnu.org/licenses/>.                                                  *
- *                                                                                               *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
 package ckit
 
 object State {
@@ -73,9 +48,13 @@ case class ScheduleTask(nodes: Map[String,Int], id: Int, name: String, start: St
 
 case class RuntimeSchedule(cluster: Cluster, jobs: Seq[ScheduleTask], reservations: Seq[ScheduleTask])
 
+import Binding._
 
 object NodeInfo {
-  case class Job(id: Int, slots: Int, start: String, runtime: Long)
+  case class Job(id: Int, slots: Either[Int,SimpleCoreBinding], start: String, runtime: Long)
 }
 
 case class NodeInfo(name: String, slots: Int, jobs: List[NodeInfo.Job])
+
+case class NodeList(nodes: IndexedSeq[String])
+case class ListNodeInfo(node: List[NodeInfo])
