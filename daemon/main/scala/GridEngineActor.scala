@@ -37,9 +37,9 @@ class GridEngineActor extends Actor with GridEngine {
   val log = Logging(context.system, this)
 
   def receive = {
-    case msg @ Protocol.JobList => jobList match {
+    case Protocol.JobList => jobList match {
       case     Success(jobs)   => sender ! JobList(jobs)
-      case f @ Failure(reason) => handleFailure(f, reason, msg)
+      case f @ Failure(reason) => handleFailure(f, reason, Protocol.JobList)
     }
 
     case msg @ Protocol.JobListFor(users) => jobList(users) match {
@@ -52,14 +52,14 @@ class GridEngineActor extends Actor with GridEngine {
       case f @ Failure(reason) => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.QueueSummary => queueSummary match {
+    case Protocol.QueueSummary => queueSummary match {
       case     Success(summary) => sender ! QueueSummaryList(summary)
-      case f @ Failure(reason)  => handleFailure(f, reason, msg)
+      case f @ Failure(reason)  => handleFailure(f, reason, Protocol.QueueSummary)
     }
 
-    case msg @ Protocol.RuntimeSchedule => runtimeSchedule match {
+    case Protocol.RuntimeSchedule => runtimeSchedule match {
       case     Success(schedule) => sender ! schedule
-      case f @ Failure(reason)   => handleFailure(f, reason, msg)
+      case f @ Failure(reason)   => handleFailure(f, reason, Protocol.RuntimeSchedule)
     }
 
     case msg @ Protocol.NodeInfo(node) => nodeInfo(node) match {
@@ -67,14 +67,14 @@ class GridEngineActor extends Actor with GridEngine {
       case f @ Failure(reason)   => handleFailure(f, reason, msg)
     }
 
-    case msg @ Protocol.NodeInfoList => exechosts match {
+    case Protocol.NodeInfoList => exechosts match {
       case     Success(nodes)  => sender ! ListNodeInfo(nodes.par.flatMap(node => nodeInfo(node).toOption.toList).toList)
-      case f @ Failure(reason) => handleFailure(f, reason, msg)
+      case f @ Failure(reason) => handleFailure(f, reason, Protocol.NodeInfoList)
     }
 
-    case msg @ Protocol.ExecHosts => exechosts match {
+    case Protocol.ExecHosts => exechosts match {
       case     Success(nodes)  => sender ! NodeList(nodes)
-      case f @ Failure(reason) => handleFailure(f, reason, msg)
+      case f @ Failure(reason) => handleFailure(f, reason, Protocol.ExecHosts)
     }
   }
 

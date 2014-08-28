@@ -37,11 +37,11 @@ class Proxy extends Actor {
   def receive = sendToRemoteHandler orElse receiveFromRemoteHandler
 
   def sendToRemoteHandler: Receive = {
-    case msg @ Protocol.JobDetail(_)    ⇒ SwingClient.remote ! msg
-    case msg @ Protocol.JobList         ⇒ SwingClient.remote ! msg
-    case msg @ Protocol.JobListFor(_)   ⇒ SwingClient.remote ! msg
-    case msg @ Protocol.QueueSummary    ⇒ SwingClient.remote ! msg
-    case msg @ Protocol.RuntimeSchedule ⇒ SwingClient.remote ! msg
+    case msg @ Protocol.JobDetail(_)  ⇒ SwingClient.remote ! msg
+    case Protocol.JobList             ⇒ SwingClient.remote ! Protocol.JobList
+    case msg @ Protocol.JobListFor(_) ⇒ SwingClient.remote ! msg
+    case Protocol.QueueSummary        ⇒ SwingClient.remote ! Protocol.QueueSummary
+    case Protocol.RuntimeSchedule     ⇒ SwingClient.remote ! Protocol.RuntimeSchedule
   }
 
   def receiveFromRemoteHandler: Receive = {
